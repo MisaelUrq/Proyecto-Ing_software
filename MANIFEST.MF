@@ -1,0 +1,2 @@
+Main-class: com.proyecto.Main
+Class-Path: ..\jars\mysql-connector.jar
