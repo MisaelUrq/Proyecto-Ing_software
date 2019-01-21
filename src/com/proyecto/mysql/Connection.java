@@ -35,7 +35,7 @@ public class Connection {
     }
 
     public boolean SearchUser(String user, String password) {
-        final String query = "select * from usuraios where usuario='"+user+"' and password='"+password+"'";
+        final String query = "select * from usuarios where name='"+user+"' and password='"+password+"'";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet result_from_stmt = stmt.executeQuery();

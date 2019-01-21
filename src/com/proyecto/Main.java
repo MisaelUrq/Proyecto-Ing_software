@@ -40,7 +40,13 @@ public class Main extends Application {
         primary_state.setHeight(WINDOW_HEIGHT);
         primary_state.setTitle(WINDOW_NAME);
 
-
-        LoginWindow login_window = new LoginWindow(sql_connection);
+        LoginWindow login_window = new LoginWindow();
+        login_window.accept_button.setOnAction(event -> {
+                if (sql_connection.SearchUser(login_window.user_field.getText(),
+                                              login_window.pass_field.getText())) {
+                    login_window.close();
+                    primary_state.show();
+                }
+            });
     }
 }
