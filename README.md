@@ -22,6 +22,6 @@ Para poder compilar y correr el programa por ahora se asumen los siguientes punt
 Por ahora la única manera de correrlo sin lineas de commando es usando los archivos .bat
 
 1. Windows:
-    1. Correr run.bat
+    1. Correr run.bat o el .jar.
 2. Mac/Linux:
     1. Proximamente porque no tengo ni linux ni mac para hacer un archivo de bash y saber que funciona. Por lo tanto posiblemente esta opción estará lista hasta el fin del desarrollo.

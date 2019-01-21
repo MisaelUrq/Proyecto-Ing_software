@@ -1,23 +1,46 @@
 package com.proyecto;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import com.proyecto.mysql.Connection;
+import com.proyecto.gui.LoginWindow;
 
-public class Main {
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    private static final int WINDOW_HEIGHT = 400;
+    private static final int WINDOW_WIDTH  = 600;
+    private static final String WINDOW_NAME = "App";
+
+
+    private static Connection sql_connection;
 
     public static void main(String[] args) {
-        Connection conn;
-        final String nombre_base_datos = "prueba"; // NOTE(Misael): Sustituir con base de datos a usar.
-        final String usuario           = "root";   // NOTE(Misael): Sustituir con usuario.
-        final String contrasenna       = "";       // NOTE(Misael): Sustituir con contraseña.
+        final String database          = System.getProperty("database", "prueba");
+        final String user              = System.getProperty("user", "root");
+        final String password          = System.getProperty("password", "");
 
+        // NOTE(Misael): Solo para pruebas...
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+nombre_base_datos+"?serverTimezone=CST", usuario, contrasenna);
-            System.out.println("Se pudo conectar correctamente...");
+            sql_connection = new Connection(database, user, password);
+            if (sql_connection.IsOk()) {
+                launch(args);
+            } else {
+                // TODO(Misael): Mostrar una ventana de error.
+            }
         } catch (Exception e) {
-            System.out.println("ERROR: No sé pudo establecer una conneción con la base de datos.");
+            // TODO(Misael): Hacer un sistema de login?
+            System.out.println("ERROR: No sé pudo lanzar la GUI.");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void start(Stage primary_state) {
+        primary_state.setWidth(WINDOW_WIDTH);
+        primary_state.setHeight(WINDOW_HEIGHT);
+        primary_state.setTitle(WINDOW_NAME);
+
+
+        LoginWindow login_window = new LoginWindow(sql_connection);
     }
 }
