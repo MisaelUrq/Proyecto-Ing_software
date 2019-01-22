@@ -4,6 +4,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import com.proyecto.users.User;
+
 public class Connection {
     private final int SQL_CONNECTION_PORT = 3306;
     private final String CONNECTION_DATA_STRING = "jdbc:mysql://localhost:"+SQL_CONNECTION_PORT+"/";
@@ -24,8 +26,6 @@ public class Connection {
                                               user, password);
            is_ok = true;
         } catch (Exception e) {
-            System.out.println("ERROR: No sé pudo establecer una conneción con la base de datos.");
-            e.printStackTrace();
             is_ok = false;
         }
     }
@@ -34,17 +34,18 @@ public class Connection {
         return is_ok;
     }
 
-    public boolean SearchUser(String user, String password) {
+    public User SearchUser(String user, String password) {
         final String query = "select * from usuarios where name='"+user+"' and password='"+password+"'";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet result_from_stmt = stmt.executeQuery();
             if (result_from_stmt.next() && result_from_stmt.isLast()) {
-                return true;
+                // TODO(Misael): Return the real user, not a fake one.
+                return new User();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
         }
-        return false;
+        return null;
     }
 }
