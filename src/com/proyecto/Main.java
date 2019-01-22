@@ -12,7 +12,6 @@ public class Main extends Application {
     private static final int WINDOW_WIDTH  = 600;
     private static final String WINDOW_NAME = "App";
 
-
     private static Connection sql_connection;
     private static User       usuario_actual;
 
@@ -51,6 +50,7 @@ public class Main extends Application {
                     primary_state.show();
                 }
             });
+
 
     }
 }
