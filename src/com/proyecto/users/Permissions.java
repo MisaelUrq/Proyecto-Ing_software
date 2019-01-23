@@ -9,7 +9,13 @@ public class Permissions {
         public boolean read; // TODO(Misael): Forgot to put this on the MySQL table. I'm dump...
 
         public AccessModel() {
+        }
 
+        public void FillAccessModes(boolean create, boolean modify, boolean delete, boolean read) {
+            this.create = create;
+            this.modify = modify;
+            this.delete = delete;
+            this.read   = read;
         }
     }
 
@@ -20,6 +26,10 @@ public class Permissions {
     public AccessModel department;
 
     public Permissions() {
-
+        users       = new AccessModel();
+        products    = new AccessModel();
+        oferts      = new AccessModel();
+        permissions = new AccessModel();
+        department  = new AccessModel();
     }
 }

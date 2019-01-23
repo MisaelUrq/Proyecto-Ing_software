@@ -2,10 +2,12 @@ package com.proyecto;
 
 import com.proyecto.mysql.Connection;
 import com.proyecto.gui.LoginWindow;
+import com.proyecto.gui.MainWindow;
 import com.proyecto.users.User;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.scene.Scene;
 
 public class Main extends Application {
     private static final int WINDOW_HEIGHT = 400;
@@ -47,8 +49,12 @@ public class Main extends Application {
                                                            login_window.pass_field.getText());
                 if (usuario_actual != null) {
                     login_window.close();
+                    primary_state.setScene(new Scene(new MainWindow(usuario_actual.GetName())));
                     primary_state.show();
+                } else {
+                    // TODO(Misael): Display error on finding the user.
                 }
+
             });
 
 
