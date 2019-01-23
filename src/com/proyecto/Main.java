@@ -49,7 +49,8 @@ public class Main extends Application {
                                                            login_window.pass_field.getText());
                 if (usuario_actual != null) {
                     login_window.close();
-                    primary_state.setScene(new Scene(new MainWindow(usuario_actual.GetName())));
+                    Scene scene = new Scene(new MainWindow(usuario_actual.GetName()));
+                    primary_state.setScene(scene);
                     primary_state.show();
                 } else {
                     // TODO(Misael): Display error on finding the user.
