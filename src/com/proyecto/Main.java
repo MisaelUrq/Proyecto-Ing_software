@@ -49,7 +49,7 @@ public class Main extends Application {
                                                            login_window.pass_field.getText());
                 if (usuario_actual != null) {
                     login_window.close();
-                    Scene scene = new Scene(new MainWindow(usuario_actual.GetName()));
+                    Scene scene = new Scene(new MainWindow(sql_connection, usuario_actual.GetName()));
                     primary_state.setScene(scene);
                     primary_state.show();
                 } else {

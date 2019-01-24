@@ -20,6 +20,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.geometry.Insets;
 
+import com.proyecto.mysql.Connection;
+
 public class MainWindow extends VBox {
 
     private final String[] opciones_menus = { "alta", "baja", "modificar" };
@@ -32,7 +34,7 @@ public class MainWindow extends VBox {
     private GridPane lista_compra_menu;
     private HBox     extra_buttons;
 
-    public MainWindow(String current_user_name) {
+    public MainWindow(Connection sql_connection, String current_user_name) {
 
         {
             // NOTE(Misael): Configuración de menú.
@@ -45,7 +47,7 @@ public class MainWindow extends VBox {
                 productos_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 productos_item[i].setOnAction(event -> {
-                        ProductDataWindow window = new ProductDataWindow(type);
+                        ProductDataWindow window = new ProductDataWindow(sql_connection, type);
                         window.LoadScene();
                     });
                 menu_productos.getItems().add(productos_item[i]);

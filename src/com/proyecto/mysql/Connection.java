@@ -35,6 +35,17 @@ public class Connection {
         return is_ok;
     }
 
+    public boolean ExecuteQuery(String query) {
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
     public User SearchUser(String user, String password) {
         final String query = "select * from usuarios where name='"+user+"' and password='"+password+"';";
         try {
