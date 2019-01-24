@@ -55,9 +55,6 @@ public class Main extends Application {
                 } else {
                     // TODO(Misael): Display error on finding the user.
                 }
-
             });
-
-
     }
 }

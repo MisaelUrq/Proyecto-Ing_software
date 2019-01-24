@@ -18,7 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-
+import javafx.geometry.Insets;
 
 public class MainWindow extends VBox {
 
@@ -43,6 +43,11 @@ public class MainWindow extends VBox {
 
             for (int i = 0; i < productos_item.length; ++i) {
                 productos_item[i] = new MenuItem(opciones_menus[i]);
+                String type = opciones_menus[i];
+                productos_item[i].setOnAction(event -> {
+                        ProductDataWindow window = new ProductDataWindow(type);
+                        window.LoadScene();
+                    });
                 menu_productos.getItems().add(productos_item[i]);
             }
             menu_bar.getMenus().add(menu_productos);
@@ -56,9 +61,12 @@ public class MainWindow extends VBox {
             add_productos_menu.getChildren().addAll(new TextField("buscar"),
                                                     new ListView<String>(),
                                                     new Button("Agregar"));
+            Insets padding = new Insets(10, 10, 10, 10);
+            add_productos_menu.setPadding(padding);
 
             lista_compra_menu = new GridPane();
             lista_compra_menu.add(new ListView<String>(), 0, 0);
+            lista_compra_menu.setPadding(padding);
 
             extra_buttons = new HBox();
             extra_buttons.getChildren().addAll(new Button("Finalizar compra"));
@@ -67,6 +75,7 @@ public class MainWindow extends VBox {
             main_view.add(lista_compra_menu, 1, 0);
             main_view.add(extra_buttons, 1, 1);
             main_view.setAlignment(javafx.geometry.Pos.CENTER);
+            main_view.setPadding(padding);
         }
 
         this.setFillWidth(true);
