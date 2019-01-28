@@ -1,0 +1,83 @@
+CREATE TABLE descuentos(
+       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+       name VARCHAR(30) NOT NULL,
+       porcentaje FLOAT(5, 2),
+       rebaja FLOAT(10, 2),
+       tipo CHAR(1) NOT NULL,
+       id_producto INT,
+       id_departamento INT,
+       id_combo_descuento INT,
+       fecha_expiracion DATE NOT NULL);
+
+ 
+CREATE TABLE combo_descuentos(
+       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+       id_descuento INT NOT NULL,
+       id_producto INT NOT NULL,
+       FOREIGN KEY(id_producto) REFERENCES producto(id),
+       FOREIGN KEY(id_descuento) REFERENCES descuentos(id));
+
+CREATE TABLE producto(
+       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+       name VARCHAR(70) NOT NULL,
+       precio FLOAT(10, 2) NOT NULL,
+       cantidad INT NOT NULL,
+       id_descuento INT NOT NULL,
+       id_departamento INT NOT NULL,
+       FOREIGN KEY(id_departamento) REFERENCES departamento(id)
+);
+
+create table departamento(
+       id int not null auto_increment primary key,
+       name varchar(40) not null,
+       id_descuento int not null
+       );
+
+create table usuarios(
+       id int not null auto_increment primary key,
+       name varchar(40) not null,
+       password varchar(40) not null,
+       email varchar(70) not null,
+       edad int not null,
+       fecha_nac date not null,
+       id_perfil int not null,
+       foreign key(id_perfil) references perfil(id)
+       );
+
+
+create table perfil(
+       id int not null auto_increment primary key,
+       name varchar(20) not null,
+       alta_usuario bool not null,
+       baja_usuario bool not null,
+       modificar_usuario bool not null,
+       alta_producto bool not null,
+       baja_producto bool not null,
+       modificar_producto bool not null,
+       alta_departamentos bool not null,
+       baja_departamentos bool not null,
+       modificar_departamentos bool not null,
+       alta_descuento bool not null,
+       baja_descuento bool not null,
+       modificar_descuento bool not null,
+       alta_pefiles bool not null,
+       baja_perfiles bool not null,
+       modificar_perfiles bool not null
+       );
+
+insert into perfil (name,
+alta_usuario, baja_usuario, modificar_usuario,
+alta_producto, baja_producto, modificar_producto,
+alta_departamentos, baja_departamentos, modificar_departamentos,
+alta_descuento, baja_descuento, modificar_descuento,
+alta_pefiles, baja_perfiles, modificar_perfiles) VALUES('root',
+True, True, True,
+True, True, True,
+True, True, True,
+True, True, True,
+True, True, True);
+
+
+INSERT INTO usuarios (name, password, email, edad, fecha_nac, id_perfil) VALUES('admin', '123', 'empresa@oxxo.mx', 0, '1000-01-01', 1);
+
+INSERT INTO departamento (name, id_descuento) VALUES('Gaseosas', 0);

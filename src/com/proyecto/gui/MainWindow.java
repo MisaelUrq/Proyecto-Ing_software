@@ -21,6 +21,7 @@ import javafx.scene.control.ListView;
 import javafx.geometry.Insets;
 
 import com.proyecto.mysql.Connection;
+import com.proyecto.gui.mainwindow.ListProductsView;
 
 public class MainWindow extends VBox {
 
@@ -30,7 +31,7 @@ public class MainWindow extends VBox {
     private Menu    menu_productos;
     private MenuItem productos_item[];
     private GridPane main_view;
-    private VBox     add_productos_menu;
+    private ListProductsView productos_menu;
     private GridPane lista_compra_menu;
     private HBox     extra_buttons;
 
@@ -59,13 +60,11 @@ public class MainWindow extends VBox {
             // NOTE(Misael): Configuración de la vista principal.
             // TODO(Misael): Talvez separar cada region de la ventana
             // principal en su prodía clase...
-            add_productos_menu = new VBox();
-            add_productos_menu.getChildren().addAll(new TextField("buscar"),
-                                                    new ListView<String>(),
-                                                    new Button("Agregar"));
-            Insets padding = new Insets(10, 10, 10, 10);
-            add_productos_menu.setPadding(padding);
+            productos_menu = new ListProductsView();
+            productos_menu.AddAllTolist(sql_connection.GetAllProducts());
 
+
+            Insets padding = new Insets(10, 10, 10, 10);
             lista_compra_menu = new GridPane();
             lista_compra_menu.add(new ListView<String>(), 0, 0);
             lista_compra_menu.setPadding(padding);
@@ -73,7 +72,7 @@ public class MainWindow extends VBox {
             extra_buttons = new HBox();
             extra_buttons.getChildren().addAll(new Button("Finalizar compra"));
 
-            main_view.add(add_productos_menu, 0, 0, 1, 2);
+            main_view.add(productos_menu, 0, 0, 1, 2);
             main_view.add(lista_compra_menu, 1, 0);
             main_view.add(extra_buttons, 1, 1);
             main_view.setAlignment(javafx.geometry.Pos.CENTER);

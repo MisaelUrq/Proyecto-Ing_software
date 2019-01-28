@@ -10,11 +10,21 @@ public class Product {
     private int    id_department; // TODO(Misael): Replace this with pointer to a Department class when ready.
 
     public Product(String name, float price, int count_on_store) {
+        this.id = 0;
         this.name = name;
         this.price = price;
         this.count_on_store = count_on_store;
         this.id_discount = 0;
-        this.id_department = 1;
+        this.id_department = 0;
+    }
+
+    public Product(int id, String name, float price, int count_on_store, int id_discount, int id_department) {
+        this.id    = id;
+        this.name  = name;
+        this.price = price;
+        this.count_on_store = count_on_store;
+        this.id_discount    = id_discount;
+        this.id_department  = id_department;
     }
 
     public String GetQueryForCreation(String table) {
@@ -32,4 +42,19 @@ public class Product {
         return query;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getCount_on_store() {
+        return count_on_store;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public boolean getId_discount() {
+        return (id_discount > 0) ? true: false;
+    }
 }

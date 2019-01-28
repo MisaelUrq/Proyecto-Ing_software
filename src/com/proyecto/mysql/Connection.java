@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import com.proyecto.users.User;
 import com.proyecto.users.Permissions;
 
+import com.proyecto.data.Product;
+
 public class Connection {
     private final int SQL_CONNECTION_PORT = 3306;
     private final String CONNECTION_DATA_STRING = "jdbc:mysql://localhost:"+SQL_CONNECTION_PORT+"/";
@@ -46,13 +48,48 @@ public class Connection {
         }
     }
 
+    public Product[] GetAllProducts() {
+        final String query = "select * from producto;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            Product[] result;
+
+            {
+                ResultSet result_set = stmt.executeQuery();
+                int count = 0;
+                while (result_set.next()) {
+                    count++;
+                    if (result_set.isLast()) { break; }
+                }
+                result = new Product[count];
+            }
+
+            ResultSet result_set = stmt.executeQuery();
+            int i = 0;
+            while (result_set.next()) {
+                System.out.println("");
+                int id = result_set.getInt("id");
+                String name = result_set.getString("name");
+                float price = result_set.getFloat("precio");
+                int count   = result_set.getInt("cantidad");
+                int id_discount   = result_set.getInt("id_descuento");
+                int id_department = result_set.getInt("id_departamento");
+                result[i++] = new Product(id, name, price, count, id_discount, id_department);
+                if (result_set.isLast()) { break; }
+            }
+            return result;
+        } catch (Exception e) {
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
+        }
+        return null;
+    }
+
     public User SearchUser(String user, String password) {
         final String query = "select * from usuarios where name='"+user+"' and password='"+password+"';";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet result_set = stmt.executeQuery();
             if (result_set.next() && result_set.isLast()) {
-                // TODO(Misael): Return the real user, not a fake one.
                 int user_id = result_set.getInt("id");
 
                 String perfil_query = "select * from perfil where id="+user_id+";";

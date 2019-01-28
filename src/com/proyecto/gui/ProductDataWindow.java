@@ -11,7 +11,6 @@ import com.proyecto.data.Product;
 public class ProductDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
 
-
     public ProductDataWindow(Connection sql_connection, String type) {
         super("Productos.", 300, 300);
         switch (type) {
@@ -37,9 +36,9 @@ public class ProductDataWindow extends BasicWindow {
         Label departamento = new Label("Departamento: ");
         departamento.setPadding(padding);
 
-        TextField name_field     = new TextField("nombre");
-        TextField precio_field   = new TextField("precio");
-        TextField cantidad_field = new TextField("cantidad");
+        TextField name_field         = new TextField("nombre");
+        TextField precio_field       = new TextField("precio");
+        TextField cantidad_field     = new TextField("cantidad");
         TextField departamento_field = new TextField("departamento"); // TODO(Misael): Esto necesita dar una lista de los departamentos existentes.
 
         Button aceptar = new Button("Dar de alta");
