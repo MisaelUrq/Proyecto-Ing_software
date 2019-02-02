@@ -42,19 +42,31 @@ public class Product {
         return query;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
-    public int getCount_on_store() {
-        return count_on_store;
+    public String getName() {
+        return name;
     }
 
     public float getPrice() {
         return price;
     }
 
+    public int getCount_on_store() {
+        return count_on_store;
+    }
+
     public boolean getId_discount() {
         return (id_discount > 0) ? true: false;
+    }
+
+    public int GetIDDiscount() {
+        return id_discount;
+    }
+
+    public int getIDDeparment() {
+        return id_department;
     }
 }

@@ -43,6 +43,10 @@ public class ProductDataWindow extends BasicWindow {
 
         Button aceptar = new Button("Dar de alta");
         aceptar.setOnAction(event -> {
+                // TODO(Misael): Esto ya no sirve, necesitamos buscar
+                // en los departamentos y seleccionar uno que sea
+                // valido, una vez echo esto, necesitamos actualizar
+                // la tabla.
                 String name_value = name_field.getText();
                 String precio_value = precio_field.getText();
                 String cantidad_value = cantidad_field.getText();
@@ -54,11 +58,12 @@ public class ProductDataWindow extends BasicWindow {
                                                   Float.parseFloat(precio_field.getText()),
                                                   Integer.parseInt(cantidad_field.getText()));
                      // TODO(Misael): Leer el nombre de la base de datos de otro lugar...
-                    if (sql_connection.ExecuteQuery(product.GetQueryForCreation("producto"))) {
+                    /*
+                    if (sql_connection.AddProducto(product, "producto")) {
                         System.out.println("Fila guardada con exito.");
                     } else {
                         System.out.println("Error al guardar fila.");
-                    }
+                    } */
                 } else {
                     // TODO(Misael): Cambiar el texto de los campos que hayan estado en error.
                 }

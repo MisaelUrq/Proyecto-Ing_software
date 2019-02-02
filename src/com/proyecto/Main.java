@@ -10,14 +10,15 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 
 public class Main extends Application {
-    private static final int WINDOW_HEIGHT = 400;
-    private static final int WINDOW_WIDTH  = 600;
-    private static final String WINDOW_NAME = "App";
+    private static final int    WINDOW_HEIGHT = 400;
+    private static final int    WINDOW_WIDTH  = 600;
+    private static final String WINDOW_NAME   = "App";
 
     private static Connection sql_connection;
     private static User       usuario_actual;
 
     public static void main(String[] args) {
+        // TODO(Misael): Switch this to a file...
         final String database          = System.getProperty("database", "prueba");
         final String user              = System.getProperty("user", "root");
         final String password          = System.getProperty("password", "");

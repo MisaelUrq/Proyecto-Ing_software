@@ -48,6 +48,11 @@ public class Connection {
         }
     }
 
+    public boolean AddProducto(Product product, String product_table) {
+        return ExecuteQuery(product.GetQueryForCreation(product_table));
+    }
+
+    // TODO(Misael): Make this for every thing on the database.
     public Product[] GetAllProducts() {
         final String query = "select * from producto;";
         try {
