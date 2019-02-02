@@ -1,6 +1,6 @@
 @echo off
 SET USER=misael
 SET DATABASE=oxxo_db
-SET PASSWORD=
+SET PASSWORD=%1
 
-java -jar -Duser=%USER% -Ddatabase=%DATABASE% -Dpassword=%PASSWORD%  bin\Oxxo.jar %*
+java -jar -Duser=%USER% -Ddatabase=%DATABASE% -Dpassword=%PASSWORD%  bin\Oxxo.jar
