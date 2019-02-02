@@ -8,6 +8,7 @@ import com.proyecto.users.User;
 import com.proyecto.users.Permissions;
 
 import com.proyecto.data.Product;
+import com.proyecto.data.Department;
 
 public class Connection {
     private final int SQL_CONNECTION_PORT = 3306;
@@ -52,6 +53,63 @@ public class Connection {
         return ExecuteQuery(product.GetQueryForCreation(product_table));
     }
 
+    public boolean AddDepartment(Department department, String product_table) {
+        return ExecuteQuery(department.GetQueryForCreation(product_table));
+    }
+
+    public int GetIdOfDepartment(String name) {
+        final String query = "select * from departamento where name='"+name+"';";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            int result;
+
+            ResultSet result_set = stmt.executeQuery();
+            int i = 0;
+            if (result_set.next() && result_set.isLast()) {
+                result = result_set.getInt("id");
+            } else {
+                result = -1;
+            }
+
+            return result;
+        } catch (Exception e) {
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
+        }
+        return -1;
+    }
+
+    public Department[] GetAllDepartments() {
+        final String query = "select * from departamento;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            Department[] result;
+
+            {
+                ResultSet result_set = stmt.executeQuery();
+                int count = 0;
+                while (result_set.next()) {
+                    count++;
+                    if (result_set.isLast()) { break; }
+                }
+                result = new Department[count];
+            }
+
+            ResultSet result_set = stmt.executeQuery();
+            int i = 0;
+            while (result_set.next()) {
+                int id = result_set.getInt("id");
+                String name = result_set.getString("name");
+                int id_discount   = result_set.getInt("id_descuento");
+                result[i++] = new Department(id, name, id_discount);
+                if (result_set.isLast()) { break; }
+            }
+            return result;
+        } catch (Exception e) {
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
+        }
+        return null;
+    }
+
     // TODO(Misael): Make this for every thing on the database.
     public Product[] GetAllProducts() {
         final String query = "select * from producto;";
@@ -72,7 +130,6 @@ public class Connection {
             ResultSet result_set = stmt.executeQuery();
             int i = 0;
             while (result_set.next()) {
-                System.out.println("");
                 int id = result_set.getInt("id");
                 String name = result_set.getString("name");
                 float price = result_set.getFloat("precio");

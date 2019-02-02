@@ -48,7 +48,7 @@ public class MainWindow extends VBox {
                 productos_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 productos_item[i].setOnAction(event -> {
-                        ProductDataWindow window = new ProductDataWindow(sql_connection, type);
+                        ProductDataWindow window = new ProductDataWindow(sql_connection, type, productos_menu);
                         window.LoadScene();
                     });
                 menu_productos.getItems().add(productos_item[i]);

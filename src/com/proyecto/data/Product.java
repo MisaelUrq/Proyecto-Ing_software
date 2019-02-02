@@ -9,13 +9,13 @@ public class Product {
     private int    id_discount; // TODO(Misael): Replace this with pointer to a Department class when ready.
     private int    id_department; // TODO(Misael): Replace this with pointer to a Department class when ready.
 
-    public Product(String name, float price, int count_on_store) {
+    public Product(String name, float price, int count_on_store, int id_department) {
         this.id = 0;
         this.name = name;
         this.price = price;
         this.count_on_store = count_on_store;
         this.id_discount = 0;
-        this.id_department = 0;
+        this.id_department = id_department;
     }
 
     public Product(int id, String name, float price, int count_on_store, int id_discount, int id_department) {

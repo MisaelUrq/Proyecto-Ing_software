@@ -2,20 +2,23 @@ package com.proyecto.gui;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 
+import com.proyecto.gui.mainwindow.ListProductsView;
 import com.proyecto.mysql.Connection;
 import com.proyecto.data.Product;
+import com.proyecto.data.Department;
 
 public class ProductDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
 
-    public ProductDataWindow(Connection sql_connection, String type) {
+    public ProductDataWindow(Connection sql_connection, String type, ListProductsView list_view) {
         super("Productos.", 300, 300);
         switch (type) {
         case "alta":
-            SetUpAlta(sql_connection);
+            SetUpAlta(sql_connection, list_view);
             break;
         case "baja":
             SetUpBaja(sql_connection);
@@ -26,7 +29,7 @@ public class ProductDataWindow extends BasicWindow {
         }
     }
 
-    private void SetUpAlta(Connection sql_connection) {
+    private void SetUpAlta(Connection sql_connection, ListProductsView list_view) {
         Label name     = new Label("Nombre: ");
         name.setPadding(padding);
         Label precio   = new Label("Precio: ");
@@ -39,7 +42,14 @@ public class ProductDataWindow extends BasicWindow {
         TextField name_field         = new TextField("nombre");
         TextField precio_field       = new TextField("precio");
         TextField cantidad_field     = new TextField("cantidad");
-        TextField departamento_field = new TextField("departamento"); // TODO(Misael): Esto necesita dar una lista de los departamentos existentes.
+        ChoiceBox departamento_field = new ChoiceBox(); // TODO(Misael): Esto necesita dar una lista de los departamentos existentes.
+
+        {
+            Department[] departments = sql_connection.GetAllDepartments();
+            for (Department department: departments) {
+                departamento_field.getItems().add(department.getName());
+            }
+        }
 
         Button aceptar = new Button("Dar de alta");
         aceptar.setOnAction(event -> {
@@ -47,23 +57,26 @@ public class ProductDataWindow extends BasicWindow {
                 // en los departamentos y seleccionar uno que sea
                 // valido, una vez echo esto, necesitamos actualizar
                 // la tabla.
-                String name_value = name_field.getText();
-                String precio_value = precio_field.getText();
+                String name_value     = name_field.getText();
+                String precio_value   = precio_field.getText();
                 String cantidad_value = cantidad_field.getText();
+                int    id_department   = sql_connection.GetIdOfDepartment(departamento_field.getValue().toString());
 
-                if (precio_value.matches("^\\d{0,8}(.\\d{1,2}){0,1}$") &&
+                if (id_department > 0 &&
+                    precio_value.matches("^\\d{0,8}(.\\d{1,2}){0,1}$") &&
                     name_value.matches("^([\\d\\w\\s-_]){1,70}$") &&
                     cantidad_value.matches("^\\d{1,10}$")) {
                     Product product = new Product(name_field.getText(),
                                                   Float.parseFloat(precio_field.getText()),
-                                                  Integer.parseInt(cantidad_field.getText()));
+                                                  Integer.parseInt(cantidad_field.getText()),
+                                                  id_department);
                      // TODO(Misael): Leer el nombre de la base de datos de otro lugar...
-                    /*
                     if (sql_connection.AddProducto(product, "producto")) {
-                        System.out.println("Fila guardada con exito.");
+                        list_view.AddToList(product);
+                        this.close();
                     } else {
                         System.out.println("Error al guardar fila.");
-                    } */
+                    }
                 } else {
                     // TODO(Misael): Cambiar el texto de los campos que hayan estado en error.
                 }
