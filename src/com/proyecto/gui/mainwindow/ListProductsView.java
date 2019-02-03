@@ -6,66 +6,51 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import javafx.geometry.Insets;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
 import com.proyecto.data.Product;
+import com.proyecto.gui.Table;
 
 public class ListProductsView extends VBox {
+    private final Insets padding = new Insets(10, 10, 10, 10);
     private TextField search_bar;
     private Button    add_button;
-    private TableView<Product>      table_view;
-    private ObservableList<Product> list_view;
+    private Table<Product> table_view;
 
     public ListProductsView() {
-        search_bar  = new TextField("buscar");
-        table_view  = new TableView<Product>();
+        search_bar  = new TextField();
+        search_bar.setPadding(padding);
+        table_view  = new Table<Product>();
+        table_view.setPadding(padding);
         add_button  = new Button("Agregar");
+        add_button.setPadding(padding);
         this.setMinWidth(500);
-        InitListView();
+        Table.SetTableColumns(table_view);
+        table_view.SetSearchBox(search_bar);
         getChildren().addAll(search_bar, table_view, add_button);
-        setPadding(new Insets(10, 10, 10, 10));
+        setPadding(padding);
     }
 
-    private void InitListView() {
-        list_view   = FXCollections.observableArrayList();
-        {
-            TableColumn<Product, String> column_name = new TableColumn<Product, String>("nombre");
-            column_name.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
-            table_view.getColumns().add(column_name);
+    public void RefreshView() {
+        table_view.refresh();
+    }
 
-            TableColumn<Product, Float> column_price = new TableColumn<Product, Float>("precio");
-            column_price.setCellValueFactory(new PropertyValueFactory<Product, Float>("price"));
-            table_view.getColumns().add(column_price);
-
-            TableColumn<Product, Integer> column_count = new TableColumn<Product, Integer>("Num. Existencia");
-            column_count.setCellValueFactory(new PropertyValueFactory<Product, Integer>("count_on_store"));
-            table_view.getColumns().add(column_count);
-
-            TableColumn<Product, Boolean> column_boolean = new TableColumn<Product, Boolean>("On discount");
-            column_boolean.setCellValueFactory(new PropertyValueFactory<Product, Boolean>("id_discount"));
-            table_view.getColumns().add(column_boolean);
-
-        }
-        table_view.setItems(list_view);
+    public ObservableList<Product> GetList() {
+        return table_view.GetList();
     }
 
     public void AddAllTolist(Product[] products) {
-        for (Product p: products) {
-            if (p != null) {
-                list_view.add(p);
-            }
-        }
-        table_view.refresh();
+        table_view.AddAllTolist(products);
     }
 
     public void AddToList(Product product) {
-        list_view.add(product);
-        table_view.refresh();
+        table_view.AddToList(product);
     }
 
 }

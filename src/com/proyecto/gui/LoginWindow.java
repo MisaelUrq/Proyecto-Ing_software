@@ -28,6 +28,7 @@ public class LoginWindow extends BasicWindow {
         pass_field = new TextField();
         accept_button  = new Button();
         accept_button.setText("Connectar");
+        accept_button.setDefaultButton(true);
         // window_pane.setGridLinesVisible(true);
         window_pane.setHgap(2);
         window_pane.setVgap(3);

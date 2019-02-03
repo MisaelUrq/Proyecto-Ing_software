@@ -36,7 +36,6 @@ public class MainWindow extends VBox {
     private HBox     extra_buttons;
 
     public MainWindow(Connection sql_connection, String current_user_name) {
-
         {
             // NOTE(Misael): Configuración de menú.
             main_view = new GridPane();
@@ -62,7 +61,6 @@ public class MainWindow extends VBox {
             // principal en su prodía clase...
             productos_menu = new ListProductsView();
             productos_menu.AddAllTolist(sql_connection.GetAllProducts());
-
 
             Insets padding = new Insets(10, 10, 10, 10);
             lista_compra_menu = new GridPane();

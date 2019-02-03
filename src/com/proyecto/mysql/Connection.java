@@ -15,8 +15,12 @@ public class Connection {
     private final String CONNECTION_DATA_STRING = "jdbc:mysql://localhost:"+SQL_CONNECTION_PORT+"/";
     private final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
     private final String CONNECTION_FLAGS = "?serverTimezone=CST";
+    private final String PRODUCT_TABLE = "producto";
+    private final String DEPARTMENT_TABLE = "departamento";
+
 
     private java.sql.Connection conn;
+    private final String DATABASE;
 
     private boolean is_ok;
 
@@ -24,6 +28,7 @@ public class Connection {
     // datos? De lo contrario solo deberíamos pasar el usuario del
     // admin de esa base de datos, no el global.
     public Connection(String database, String user, String password) {
+        DATABASE = database;
         try {
            Class.forName(DRIVER_NAME);
            conn = DriverManager.getConnection(CONNECTION_DATA_STRING+database+CONNECTION_FLAGS,
@@ -110,7 +115,30 @@ public class Connection {
         return null;
     }
 
-    // TODO(Misael): Make this for every thing on the database.
+    public void UpdateProduct(Product product) {
+        final String query =
+            String.format("UPDATE %s SET name='%s', precio=%f, cantidad=%d, id_descuento=%d WHERE id=%d",
+                          PRODUCT_TABLE, product.getName(), product.getPrice(),
+                          product.getCount_on_store(), product.GetIDDiscount(),
+                          product.getId());
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el producto con id = " + product.getId() + "\n\n -> " + e);
+        }
+    }
+
+    public void RemoveProduct(Product product) {
+        final String query = String.format("DELETE FROM %s WHERE id=%d", PRODUCT_TABLE, product.getId());
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el producto con id = " + product.getId() + "\n\n -> " + e);
+        }
+    }
+
     public Product[] GetAllProducts() {
         final String query = "select * from producto;";
         try {

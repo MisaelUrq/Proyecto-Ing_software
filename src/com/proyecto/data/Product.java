@@ -66,7 +66,27 @@ public class Product {
         return id_discount;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public void setCount_on_store(int id) {
+        count_on_store = id;
+    }
+
+    public void setId_discount(boolean editable) {
+        id_discount =  (editable) ? 1: 0;
+    }
+
     public int getIDDeparment() {
         return id_department;
+    }
+
+    public String toString() {
+        return String.format("Product { %s, %f, %s }", name, price, (id_discount > 0) ? "Descuento" : "");
     }
 }
