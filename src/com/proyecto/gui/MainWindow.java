@@ -1,10 +1,5 @@
 package com.proyecto.gui;
 
-
-// TODO(Misael): I think javafx needs the main window to be in the
-// class of the main, something about threads, sooo... this should be
-// a pane not a window, se configurate here and then we just set the
-// scene in main.
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
@@ -22,6 +17,7 @@ import javafx.geometry.Insets;
 
 import com.proyecto.mysql.Connection;
 import com.proyecto.gui.mainwindow.ListProductsView;
+import com.proyecto.gui.mainwindow.ComprasView;
 
 public class MainWindow extends VBox {
 
@@ -29,20 +25,19 @@ public class MainWindow extends VBox {
 
     private MenuBar menu_bar;
     private Menu    menu_productos;
-    private MenuItem productos_item[];
+    private Menu    menu_departamento;
     private GridPane main_view;
     private ListProductsView productos_menu;
-    private GridPane lista_compra_menu;
-    private HBox     extra_buttons;
+    private ComprasView lista_compra_menu;
 
     public MainWindow(Connection sql_connection, String current_user_name) {
         {
             // NOTE(Misael): Configuración de menú.
             main_view = new GridPane();
             menu_bar = new MenuBar();
-            menu_productos = new Menu("productos");
-            productos_item = new MenuItem[3];
-
+            menu_productos    = new Menu("productos");
+            menu_departamento = new Menu("departamentos");
+            MenuItem productos_item[] = new MenuItem[3];
             for (int i = 0; i < productos_item.length; ++i) {
                 productos_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
@@ -52,7 +47,19 @@ public class MainWindow extends VBox {
                     });
                 menu_productos.getItems().add(productos_item[i]);
             }
-            menu_bar.getMenus().add(menu_productos);
+
+            MenuItem departamento_item[] = new MenuItem[3];
+            for (int i = 0; i < departamento_item.length; ++i) {
+                departamento_item[i] = new MenuItem(opciones_menus[i]);
+                String type = opciones_menus[i];
+                departamento_item[i].setOnAction(event -> {
+                        DepartamentoDataWindow window = new DepartamentoDataWindow(sql_connection, type);
+                        window.LoadScene();
+                    });
+                menu_departamento.getItems().add(departamento_item[i]);
+            }
+
+            menu_bar.getMenus().addAll(menu_productos, menu_departamento);
         }
 
         {
@@ -61,18 +68,15 @@ public class MainWindow extends VBox {
             // principal en su prodía clase...
             productos_menu = new ListProductsView();
             productos_menu.AddAllTolist(sql_connection.GetAllProducts());
-
+            productos_menu.GetAddButton().setOnAction(event -> {
+                    lista_compra_menu.AddToList(productos_menu.GetSelectedProduct());
+                    lista_compra_menu.SumarACompraFinal(productos_menu.GetSelectedProduct().getPrice());
+                });
             Insets padding = new Insets(10, 10, 10, 10);
-            lista_compra_menu = new GridPane();
-            lista_compra_menu.add(new ListView<String>(), 0, 0);
-            lista_compra_menu.setPadding(padding);
-
-            extra_buttons = new HBox();
-            extra_buttons.getChildren().addAll(new Button("Finalizar compra"));
+            lista_compra_menu = new ComprasView();
 
             main_view.add(productos_menu, 0, 0, 1, 2);
             main_view.add(lista_compra_menu, 1, 0);
-            main_view.add(extra_buttons, 1, 1);
             main_view.setAlignment(javafx.geometry.Pos.CENTER);
             main_view.setPadding(padding);
         }

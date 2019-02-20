@@ -28,8 +28,16 @@ public class Department {
         return query;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public boolean getIs_in_ofert() {
+        return (id_discount > 0);
     }
 
     public String getName() {

@@ -31,14 +31,22 @@ public class ListProductsView extends VBox {
         add_button  = new Button("Agregar");
         add_button.setPadding(padding);
         this.setMinWidth(500);
-        Table.SetTableColumns(table_view);
+        Table.SetTableColumns(table_view, false);
         table_view.SetSearchBox(search_bar);
         getChildren().addAll(search_bar, table_view, add_button);
         setPadding(padding);
     }
 
+    public Button GetAddButton() {
+        return add_button;
+    }
+
     public void RefreshView() {
         table_view.refresh();
+    }
+
+    public Product GetSelectedProduct() {
+        return table_view.GetSelected();
     }
 
     public ObservableList<Product> GetList() {

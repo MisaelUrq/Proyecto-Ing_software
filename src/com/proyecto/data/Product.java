@@ -87,6 +87,6 @@ public class Product {
     }
 
     public String toString() {
-        return String.format("Product { %s, %f, %s }", name, price, (id_discount > 0) ? "Descuento" : "");
+        return String.format("%s %f %s", name, price, (id_discount > 0) ? "descuento" : "");
     }
 }

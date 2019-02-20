@@ -7,8 +7,7 @@ import java.sql.ResultSet;
 import com.proyecto.users.User;
 import com.proyecto.users.Permissions;
 
-import com.proyecto.data.Product;
-import com.proyecto.data.Department;
+import com.proyecto.data.*;
 
 public class Connection {
     private final int SQL_CONNECTION_PORT = 3306;
@@ -43,7 +42,7 @@ public class Connection {
         return is_ok;
     }
 
-    public boolean ExecuteQuery(String query) {
+    private boolean ExecuteQuery(String query) {
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.executeUpdate();
@@ -54,12 +53,8 @@ public class Connection {
         }
     }
 
-    public boolean AddProducto(Product product, String product_table) {
-        return ExecuteQuery(product.GetQueryForCreation(product_table));
-    }
-
-    public boolean AddDepartment(Department department, String product_table) {
-        return ExecuteQuery(department.GetQueryForCreation(product_table));
+    public boolean AddDeparment(Department department) {
+        return ExecuteQuery(department.GetQueryForCreation(DEPARTMENT_TABLE));
     }
 
     public int GetIdOfDepartment(String name) {
@@ -115,6 +110,30 @@ public class Connection {
         return null;
     }
 
+    public void UpdateDepartment(Department department) {
+        final String query =
+            String.format("UPDATE %s SET name='%s', id_descuento=%d WHERE id=%d",
+                          PRODUCT_TABLE, department.getName(), department.getId_discount(),
+                          department.getId());
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el departmento con id = " + department.getId() + "\n\n -> " + e);
+        }
+    }
+
+    public void RemoveDepartment(Department department) {
+        final String query = String.format("DELETE FROM %s WHERE id=%d", DEPARTMENT_TABLE, department.getId());
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el departamento con id = " + department.getId() + "\n\n -> " + e);
+        }
+    }
+
+    // Productos
     public void UpdateProduct(Product product) {
         final String query =
             String.format("UPDATE %s SET name='%s', precio=%f, cantidad=%d, id_descuento=%d WHERE id=%d",
@@ -127,6 +146,10 @@ public class Connection {
         } catch (Exception e) {
             System.out.println("ERROR: No se a podido borrar el producto con id = " + product.getId() + "\n\n -> " + e);
         }
+    }
+
+    public boolean AddProducto(Product product) {
+        return ExecuteQuery(product.GetQueryForCreation(PRODUCT_TABLE));
     }
 
     public void RemoveProduct(Product product) {
@@ -174,6 +197,7 @@ public class Connection {
         return null;
     }
 
+    // Usuarios
     public User SearchUser(String user, String password) {
         final String query = "select * from usuarios where name='"+user+"' and password='"+password+"';";
         try {

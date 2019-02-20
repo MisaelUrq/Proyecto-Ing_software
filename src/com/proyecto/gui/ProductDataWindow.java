@@ -43,7 +43,7 @@ public class ProductDataWindow extends BasicWindow {
         TextField name_field         = new TextField("nombre");
         TextField precio_field       = new TextField("precio");
         TextField cantidad_field     = new TextField("cantidad");
-        ChoiceBox departamento_field = new ChoiceBox(); // TODO(Misael): Esto necesita dar una lista de los departamentos existentes.
+        ChoiceBox departamento_field = new ChoiceBox();
 
         {
             Department[] departments = sql_connection.GetAllDepartments();
@@ -55,15 +55,11 @@ public class ProductDataWindow extends BasicWindow {
         Button aceptar = new Button("Dar de alta");
         aceptar.setDefaultButton(true);
         aceptar.setOnAction(event -> {
-                // TODO(Misael): Esto ya no sirve, necesitamos buscar
-                // en los departamentos y seleccionar uno que sea
-                // valido, una vez echo esto, necesitamos actualizar
-                // la tabla.
                 String name_value     = name_field.getText();
                 String precio_value   = precio_field.getText();
                 String cantidad_value = cantidad_field.getText();
                 String department_value = departamento_field.getValue().toString();
-                int    id_department   = sql_connection.GetIdOfDepartment(departamento_field);
+                int    id_department   = sql_connection.GetIdOfDepartment(department_value);
 
                 if (id_department > 0 &&
                     precio_value.matches("^\\d{0,8}(.\\d{1,2}){0,1}$") &&
@@ -73,8 +69,7 @@ public class ProductDataWindow extends BasicWindow {
                                                   Float.parseFloat(precio_field.getText()),
                                                   Integer.parseInt(cantidad_field.getText()),
                                                   id_department);
-                     // TODO(Misael): Leer el nombre de la base de datos de otro lugar...
-                    if (sql_connection.AddProducto(product, "producto")) {
+                    if (sql_connection.AddProducto(product)) {
                         list_view.AddToList(product);
                         this.close();
                     } else {
@@ -103,7 +98,7 @@ public class ProductDataWindow extends BasicWindow {
         search_box.setPadding(padding);
 
         Table<Product> temp_view = new Table<Product>();
-        Table.SetTableColumns(temp_view);
+        Table.SetTableColumns(temp_view, false);
         temp_view.ChangeList(list_view.GetList());
         temp_view.SetSearchBox(search_box);
 
@@ -129,7 +124,7 @@ public class ProductDataWindow extends BasicWindow {
         search_box.setPadding(padding);
 
         Table<Product> temp_view = new Table<Product>();
-        Table.SetTableColumns(temp_view);
+        Table.SetTableColumns(temp_view, false);
         temp_view.ChangeList(list_view.GetList());
         temp_view.SetSearchBox(search_box);
 

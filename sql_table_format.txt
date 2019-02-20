@@ -8,7 +8,6 @@ CREATE TABLE descuentos(
        id_departamento INT,
        id_combo_descuento INT,
        fecha_expiracion DATE NOT NULL);
-
  
 CREATE TABLE combo_descuentos(
        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
