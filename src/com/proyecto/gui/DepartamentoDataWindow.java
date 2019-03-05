@@ -26,6 +26,9 @@ public class DepartamentoDataWindow extends BasicWindow {
         case "modificar":
             SetUpModificar(sql_connection);
             break;
+        case "listar": {
+            SetUpListar(sql_connection);
+        }
         }
     }
 
@@ -124,5 +127,21 @@ public class DepartamentoDataWindow extends BasicWindow {
         window_pane.add(aceptar, 0, 4);
         window_pane.add(name_field, 1, 2);
         window_pane.add(discount_field, 1, 3);
+    }
+
+    private void SetUpListar(Connection sql_connection) {
+        Label search   = new Label("Buscar: ");
+        search.setPadding(padding);
+        TextField search_box = new TextField();
+        search_box.setPadding(padding);
+
+        Table<Department> temp_view = new Table<Department>();
+        Table.SetTableColumns(temp_view);
+        temp_view.AddAllTolist(sql_connection.GetAllDepartments());
+        temp_view.SetSearchBox(search_box);
+
+        window_pane.add(search, 0, 0);
+        window_pane.add(search_box, 1, 0);
+        window_pane.add(temp_view, 0, 1, 2, 1);
     }
 }

@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 
 public class Main extends Application {
     private static final int    WINDOW_HEIGHT = 580;
-    private static final int    WINDOW_WIDTH  = 780;
+    private static final int    WINDOW_WIDTH  = 980;
     private static final String WINDOW_NAME   = "App";
 
     private static Connection sql_connection;

@@ -47,4 +47,8 @@ public class Department {
     public int getId_discount() {
         return id_discount;
     }
+
+    public String toString() {
+        return String.format("%s %s", name, (id_discount > 0) ? "descuento" : "");
+    }
 }

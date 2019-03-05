@@ -21,7 +21,7 @@ import com.proyecto.gui.mainwindow.ComprasView;
 
 public class MainWindow extends VBox {
 
-    private final String[] opciones_menus = { "alta", "baja", "modificar" };
+    private final String[] opciones_menus = { "alta", "baja", "modificar", "listar"};
 
     private MenuBar menu_bar;
     private Menu    menu_productos;
@@ -37,6 +37,8 @@ public class MainWindow extends VBox {
             menu_bar = new MenuBar();
             menu_productos    = new Menu("productos");
             menu_departamento = new Menu("departamentos");
+            lista_compra_menu = new ComprasView();
+
             MenuItem productos_item[] = new MenuItem[3];
             for (int i = 0; i < productos_item.length; ++i) {
                 productos_item[i] = new MenuItem(opciones_menus[i]);
@@ -48,7 +50,7 @@ public class MainWindow extends VBox {
                 menu_productos.getItems().add(productos_item[i]);
             }
 
-            MenuItem departamento_item[] = new MenuItem[3];
+            MenuItem departamento_item[] = new MenuItem[4];
             for (int i = 0; i < departamento_item.length; ++i) {
                 departamento_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
@@ -69,11 +71,19 @@ public class MainWindow extends VBox {
             productos_menu = new ListProductsView();
             productos_menu.AddAllTolist(sql_connection.GetAllProducts());
             productos_menu.GetAddButton().setOnAction(event -> {
-                    lista_compra_menu.AddToList(productos_menu.GetSelectedProduct());
-                    lista_compra_menu.SumarACompraFinal(productos_menu.GetSelectedProduct().getPrice());
+                    if (productos_menu.GetSelectedProduct().getCount_on_store() > 0) {
+                        lista_compra_menu.AddToList(productos_menu.GetSelectedProduct());
+                        lista_compra_menu.SumarACompraFinal(productos_menu.GetSelectedProduct().getPrice());
+                    } else {
+                        // TODO(Misael): Mostrat un mensaje de que ya no hay producto.
+                    }
                 });
+            lista_compra_menu.GetFinalizarButton().setOnAction(e -> {
+                    lista_compra_menu.FinalizarCompra(sql_connection);
+                    productos_menu.RefreshView();
+                });
+
             Insets padding = new Insets(10, 10, 10, 10);
-            lista_compra_menu = new ComprasView();
 
             main_view.add(productos_menu, 0, 0, 1, 2);
             main_view.add(lista_compra_menu, 1, 0);

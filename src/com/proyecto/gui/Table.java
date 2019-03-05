@@ -78,6 +78,10 @@ public class Table<T> extends TableView {
         return item;
     }
 
+    public void Clear() {
+        this.getItems().remove(0, getItems().size());
+    }
+
     public T RemoveSelected() {
         int id = this.getSelectionModel().getSelectedIndex();
         T item = (T)this.getItems().get(id);
