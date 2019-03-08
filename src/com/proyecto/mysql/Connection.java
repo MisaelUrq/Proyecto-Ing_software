@@ -16,6 +16,7 @@ public class Connection {
     private final String CONNECTION_FLAGS = "?serverTimezone=CST";
     private final String PRODUCT_TABLE = "producto";
     private final String DEPARTMENT_TABLE = "departamento";
+    private final String DISCOUNT_TABLE = "descuentos";
 
 
     private java.sql.Connection conn;
@@ -241,4 +242,79 @@ public class Connection {
         }
         return null;
     }
+
+    // Descuentos
+    public boolean AddDiscount(Discount discount) {
+        return ExecuteQuery(discount.GetQueryForCreation(DISCOUNT_TABLE));
+    }
+
+    public Discount[] GetAllDiscounts() {
+        final String query = "select * from descuentos;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            Discount[] result;
+
+            {
+                ResultSet result_set = stmt.executeQuery();
+                int count = 0;
+                while (result_set.next()) {
+                    count++;
+                    if (result_set.isLast()) { break; }
+                }
+                result = new Discount[count];
+            }
+
+            ResultSet result_set = stmt.executeQuery();
+            int i = 0;
+            while (result_set.next()) {
+                int id = result_set.getInt("id");
+                String name = result_set.getString("name");
+                float value   = result_set.getFloat("porcentaje");
+                String type = result_set.getString("tipo");
+                int id_producto = result_set.getInt("id_producto");
+                int id_department = result_set.getInt("id_departamento");
+                int id_combo_descuento = result_set.getInt("id_combo_descuento");
+                String fecha = result_set.getString("fecha_expiracion");
+                result[i] = new Discount(id, name, type.charAt(0), value, fecha);
+                result[i].setId_producto(id_producto);
+                result[i].setId_departamento(id_department);
+                result[i].setId_combo_descuentos(id_combo_descuento);
+                i++;
+                // TODO(misael): is this necesary?
+                if (result_set.isLast()) { break; }
+            }
+            return result;
+        } catch (Exception e) {
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
+        }
+        return null;
+    }
+
+    public void RemoveDiscount(Discount discount) {
+        final String query = String.format("DELETE FROM %s WHERE id=%d", DISCOUNT_TABLE, discount.getId());
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el descuento con id = " + discount.getId() + "\n\n -> " + e);
+        }
+    }
+
+    public void UpdateDiscount(Discount discount) {
+        final String query =
+            String.format("UPDATE %s SET name='%s', porcentaje=%f, rebaja=%f, tipo='%s', id_producto=%d, id_department=%d, id_combo_descuento=%d, fecha_expiracion='%s' WHERE id=%d",
+                          PRODUCT_TABLE, discount.getName(), discount.getValue(),
+                          discount.getValue(), discount.getType().charAt(0),
+                          discount.getId_producto(), discount.getId_departamento(),
+                          discount.getId_combo_descuentos(), discount.getFecha_expiracion(),
+                          discount.getId());
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el descuento con id = " +
+                               discount.getId() + "\n\n -> " + e);
+        }
+    }
+
 }

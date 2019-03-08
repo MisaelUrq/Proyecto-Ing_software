@@ -26,6 +26,7 @@ public class MainWindow extends VBox {
     private MenuBar menu_bar;
     private Menu    menu_productos;
     private Menu    menu_departamento;
+    private Menu    menu_descuentos;
     private GridPane main_view;
     private ListProductsView productos_menu;
     private ComprasView lista_compra_menu;
@@ -37,6 +38,7 @@ public class MainWindow extends VBox {
             menu_bar = new MenuBar();
             menu_productos    = new Menu("productos");
             menu_departamento = new Menu("departamentos");
+            menu_descuentos = new Menu("Descuentos");
             lista_compra_menu = new ComprasView();
 
             MenuItem productos_item[] = new MenuItem[3];
@@ -61,7 +63,22 @@ public class MainWindow extends VBox {
                 menu_departamento.getItems().add(departamento_item[i]);
             }
 
-            menu_bar.getMenus().addAll(menu_productos, menu_departamento);
+            MenuItem descuento_item[] = new MenuItem[4];
+            for (int i = 0; i < descuento_item.length; ++i) {
+                if (opciones_menus[i].compareTo("modificar") == 0) {
+                    continue;
+                }
+                descuento_item[i] = new MenuItem(opciones_menus[i]);
+                String type = opciones_menus[i];
+                descuento_item[i].setOnAction(event -> {
+                        DescuentosDataWindow  window = new DescuentosDataWindow(sql_connection,
+                                                                                type);
+                        window.LoadScene();
+                    });
+                menu_descuentos.getItems().add(descuento_item[i]);
+            }
+
+            menu_bar.getMenus().addAll(menu_productos, menu_departamento, menu_descuentos);
         }
 
         {
@@ -73,7 +90,8 @@ public class MainWindow extends VBox {
             productos_menu.GetAddButton().setOnAction(event -> {
                     if (productos_menu.GetSelectedProduct().getCount_on_store() > 0) {
                         lista_compra_menu.AddToList(productos_menu.GetSelectedProduct());
-                        lista_compra_menu.SumarACompraFinal(productos_menu.GetSelectedProduct().getPrice());
+                        lista_compra_menu.SumarACompraFinal(
+                            productos_menu.GetSelectedProduct().getPrice());
                     } else {
                         // TODO(Misael): Mostrat un mensaje de que ya no hay producto.
                     }

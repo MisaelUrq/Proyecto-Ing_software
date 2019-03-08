@@ -129,4 +129,22 @@ public class Table<T> extends TableView {
             table_view.getColumns().add(column_boolean);
         }
     }
+
+    public static void SetTableColumnsDiscount(Table<Discount> table_view) {
+        TableColumn<Discount, String> column_name = new TableColumn<Discount, String>("nombre");
+        column_name.setCellValueFactory(new PropertyValueFactory<Discount, String>("name"));
+        table_view.getColumns().add(column_name);
+
+        TableColumn<Discount, String> type_ofert = new TableColumn<Discount, String>("tipo");
+        type_ofert.setCellValueFactory(new PropertyValueFactory<Discount, String>("type"));
+        table_view.getColumns().add(type_ofert);
+
+        TableColumn<Discount, Float> value_ofert = new TableColumn<Discount, Float>("Porcentaje");
+        value_ofert.setCellValueFactory(new PropertyValueFactory<Discount, Float>("value"));
+        table_view.getColumns().add(value_ofert);
+
+        TableColumn<Discount, String> fecha_ofert = new TableColumn<Discount, String>("fecha de expiración");
+        fecha_ofert.setCellValueFactory(new PropertyValueFactory<Discount, String>("fecha_expiracion"));
+        table_view.getColumns().add(fecha_ofert);
+    }
 }

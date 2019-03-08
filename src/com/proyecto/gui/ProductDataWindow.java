@@ -14,6 +14,9 @@ import com.proyecto.data.Department;
 
 public class ProductDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
+    public  Button button_seleccionador;
+    private Product producto_return;
+    private Table<Product> temp_view = new Table<Product>();
 
     public ProductDataWindow(Connection sql_connection, String type, ListProductsView list_view) {
         super("Productos.", 360, 400);
@@ -27,6 +30,9 @@ public class ProductDataWindow extends BasicWindow {
         case "modificar":
             SetUpModificar(sql_connection, list_view);
             break;
+        case "seleccionar": {
+            SetUpSeleccionar(sql_connection);
+        } break;
         }
     }
 
@@ -97,7 +103,6 @@ public class ProductDataWindow extends BasicWindow {
         TextField search_box = new TextField();
         search_box.setPadding(padding);
 
-        Table<Product> temp_view = new Table<Product>();
         Table.SetTableColumns(temp_view, false);
         temp_view.ChangeList(list_view.GetList());
         temp_view.SetSearchBox(search_box);
@@ -123,7 +128,6 @@ public class ProductDataWindow extends BasicWindow {
         TextField search_box = new TextField();
         search_box.setPadding(padding);
 
-        Table<Product> temp_view = new Table<Product>();
         Table.SetTableColumns(temp_view, false);
         temp_view.ChangeList(list_view.GetList());
         temp_view.SetSearchBox(search_box);
@@ -178,5 +182,33 @@ public class ProductDataWindow extends BasicWindow {
         window_pane.add(precio_field, 1, 3);
         window_pane.add(cantidad_field, 1, 4);
         window_pane.add(discount_field, 1, 5);
+    }
+
+    private void SetUpSeleccionar(Connection sql_connection) {
+        Label search   = new Label("Buscar: ");
+        button_seleccionador = new Button("Aceptar");
+
+        search.setPadding(padding);
+        TextField search_box = new TextField();
+        search_box.setPadding(padding);
+
+        Table<Product> temp_view = new Table<Product>();
+        Table.SetTableColumns(temp_view, true);
+        temp_view.AddAllTolist(sql_connection.GetAllProducts());
+        temp_view.SetSearchBox(search_box);
+
+        System.out.println("hola");
+        window_pane.add(search, 0, 0);
+        window_pane.add(search_box, 1, 0);
+        window_pane.add(button_seleccionador, 1, 3);
+        window_pane.add(temp_view, 0, 1, 2, 1);
+    }
+
+    public void SetUpReturnSelect() {
+        producto_return = temp_view.GetSelected();
+    }
+
+    public Product GetSelectedProduct() {
+        return producto_return;
     }
 }
