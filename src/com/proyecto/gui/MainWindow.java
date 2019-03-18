@@ -18,6 +18,7 @@ import javafx.geometry.Insets;
 import com.proyecto.mysql.Connection;
 import com.proyecto.gui.mainwindow.ListProductsView;
 import com.proyecto.gui.mainwindow.ComprasView;
+import com.proyecto.users.*;
 
 public class MainWindow extends VBox {
 
@@ -27,11 +28,13 @@ public class MainWindow extends VBox {
     private Menu    menu_productos;
     private Menu    menu_departamento;
     private Menu    menu_descuentos;
+    private Menu    menu_perfiles;
+    private Menu    menu_usuarios;
     private GridPane main_view;
     private ListProductsView productos_menu;
     private ComprasView lista_compra_menu;
 
-    public MainWindow(String current_user_name) {
+    public MainWindow(User usuario_actual) {
         {
             // NOTE(Misael): Configuración de menú.
             main_view = new GridPane();
@@ -39,6 +42,8 @@ public class MainWindow extends VBox {
             menu_productos    = new Menu("productos");
             menu_departamento = new Menu("departamentos");
             menu_descuentos = new Menu("Descuentos");
+            menu_perfiles = new Menu("perfiles");
+            menu_usuarios = new Menu("usuarios");
             lista_compra_menu = new ComprasView();
 
             MenuItem productos_item[] = new MenuItem[3];
@@ -77,7 +82,35 @@ public class MainWindow extends VBox {
                 menu_descuentos.getItems().add(descuento_item[i]);
             }
 
-            menu_bar.getMenus().addAll(menu_productos, menu_departamento, menu_descuentos);
+            MenuItem perfil_item[] = new MenuItem[4];
+            for (int i = 0; i < perfil_item.length; ++i) {
+                if (opciones_menus[i].compareTo("modificar") == 0) {
+                    continue;
+                }
+                perfil_item[i] = new MenuItem(opciones_menus[i]);
+                String type = opciones_menus[i];
+                perfil_item[i].setOnAction(event -> {
+                        PerfilesDataWindow  window = new PerfilesDataWindow(type);
+                        window.LoadScene();
+                    });
+                menu_perfiles.getItems().add(perfil_item[i]);
+            }
+
+            // MenuItem user_item[] = new MenuItem[4];
+            // for (int i = 0; i < user_item.length; ++i) {
+            //     if (opciones_menus[i].compareTo("modificar") == 0) {
+            //         continue;
+            //     }
+            //     user_item[i] = new MenuItem(opciones_menus[i]);
+            //     String type = opciones_menus[i];
+            //     user_item[i].setOnAction(event -> {
+            //             PerfilesDataWindow  window = new PerfilesDataWindow(type);
+            //             window.LoadScene();
+            //         });
+            //     menu_useres.getItems().add(user_item[i]);
+            // }
+
+            menu_bar.getMenus().addAll(menu_productos, menu_departamento, menu_descuentos, menu_perfiles, menu_usuarios);
         }
 
         {

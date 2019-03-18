@@ -97,5 +97,4 @@ public class ComprasView extends GridPane {
     public void AddToList(Product product) {
         table_view.AddToList(product);
     }
-
 }

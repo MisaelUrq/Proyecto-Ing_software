@@ -17,6 +17,8 @@ public class Connection {
     private static final String PRODUCT_TABLE = "producto";
     private static final String DEPARTMENT_TABLE = "departamento";
     private static final String DISCOUNT_TABLE = "descuentos";
+    private static final String USER_TABLE = "usuarios";
+    private static final String PERFIL_TABLE = "perfil";
 
     private static java.sql.Connection conn;
     private static String DATABASE;
@@ -227,6 +229,7 @@ public class Connection {
 
                 if (perfil_result.next() && perfil_result.isLast()) {
                     Permissions permissions = new Permissions();
+                    permissions.id = perfil_result.getInt("id");
                     permissions.users.FillAccessModes(perfil_result.getBoolean("alta_usuario"),
                                                       perfil_result.getBoolean("baja_usuario"),
                                                       perfil_result.getBoolean("modificar_usuario"), true);
@@ -247,6 +250,7 @@ public class Connection {
                                             result_set.getString("name"),
                                             result_set.getString("password"),
                                             result_set.getString("email"),
+                                            result_set.getInt("edad"),
                                             result_set.getString("fecha_nac"), permissions);
                     return result;
                 }
@@ -356,21 +360,137 @@ public class Connection {
         }
     }
 
-    public static void UpdateDiscount(Discount discount) {
+    // Usuarios
+    public static boolean AddUser(User user) {
+        return ExecuteQuery(user.GetQueryForCreation(USER_TABLE));
+    }
+
+    public static User[] GetAllUsers() {
+        final String query = "select * from usuarios;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            User[] result;
+
+            {
+                ResultSet result_set = stmt.executeQuery();
+                int count = 0;
+                while (result_set.next()) {
+                    count++;
+                    if (result_set.isLast()) { break; }
+                }
+                result = new User[count];
+            }
+
+            ResultSet result_set = stmt.executeQuery();
+            int i = 0;
+            while (result_set.next()) {
+                int id = result_set.getInt("id");
+                String name = result_set.getString("name");
+                String email   = result_set.getString("email");
+                int edad = result_set.getInt("edad");
+                int perfil = result_set.getInt("id_perfil");
+                String fecha = result_set.getString("fecha_nac");
+                result[i] = new User(id, name, "*****", email, edad, fecha, null);
+                i++;
+                // TODO(misael): is this necesary?
+                if (result_set.isLast()) { break; }
+            }
+            return result;
+        } catch (Exception e) {
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
+        }
+        return null;
+    }
+
+    public static void RemoveUser(User user) {
+        if (user.getName() != "admin") { return; }
+        final String query = String.format("DELETE FROM %s WHERE id=%d", USER_TABLE, user.getId());
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el descuento con id = " + user.getId() + "\n\n -> " + e);
+        }
+    }
+
+    public static void UpdateUser(User user) {
         final String query =
-            String.format("UPDATE %s SET name='%s', porcentaje=%f, rebaja=%f, tipo='%s', id_producto=%d, id_department=%d, id_combo_descuento=%d, fecha_expiracion='%s' WHERE id=%d",
-                          PRODUCT_TABLE, discount.getName(), discount.getValue(),
-                          discount.getValue(), discount.getType().charAt(0),
-                          discount.getId_producto(), discount.getId_departamento(),
-                          discount.getId_combo_descuentos(), discount.getFecha_expiracion(),
-                          discount.getId());
+            String.format("UPDATE %s SET name='%s', password='%s', email='%s', edad=%d, fecha_nac='%s' WHERE id=%d",
+                          USER_TABLE, user.getName(), user.getPassword(),
+                          user.getEmail(), user.getEdad(), user.getFecha_nac(),
+                          user.getId());
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.executeUpdate();
         } catch (Exception e) {
             System.out.println("ERROR: No se a podido borrar el descuento con id = " +
-                               discount.getId() + "\n\n -> " + e);
+                               user.getId() + "\n\n -> " + e);
         }
     }
 
+    // Perfiles Usuarios
+    public static boolean AddPerfiles(Permissions perfil) {
+        return ExecuteQuery(perfil.GetQueryForCreation(PERFIL_TABLE));
+    }
+
+    public static Permissions[] GetAllPerfiles() {
+        final String query = "select * from perfil;";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            Permissions[] result;
+
+            {
+                ResultSet result_set = stmt.executeQuery();
+                int count = 0;
+                while (result_set.next()) {
+                    count++;
+                    if (result_set.isLast()) { break; }
+                }
+                result = new Permissions[count];
+            }
+
+            ResultSet result_set = stmt.executeQuery();
+            int i = 0;
+            while (result_set.next()) {
+
+                Permissions permissions = new Permissions();
+                permissions.id = result_set.getInt("id");
+                permissions.name = result_set.getString("name");
+                permissions.users.FillAccessModes(result_set.getBoolean("alta_usuario"),
+                                                  result_set.getBoolean("baja_usuario"),
+                                                  result_set.getBoolean("modificar_usuario"), true);
+                permissions.products.FillAccessModes(result_set.getBoolean("alta_producto"),
+                                                     result_set.getBoolean("baja_producto"),
+                                                     result_set.getBoolean("modificar_producto"), true);
+                permissions.oferts.FillAccessModes(result_set.getBoolean("alta_descuento"),
+                                                   result_set.getBoolean("baja_descuento"),
+                                                   result_set.getBoolean("modificar_descuento"), true);
+                permissions.permissions.FillAccessModes(result_set.getBoolean("alta_pefiles"),
+                                                        result_set.getBoolean("baja_perfiles"),
+                                                        result_set.getBoolean("modificar_perfiles"), true);
+                permissions.department.FillAccessModes(result_set.getBoolean("alta_departamentos"),
+                                                       result_set.getBoolean("baja_departamentos"),
+                                                       result_set.getBoolean("modificar_departamentos"), true);
+                result[i] = permissions;
+                i++;
+                // TODO(misael): is this necesary?
+                if (result_set.isLast()) { break; }
+            }
+            return result;
+        } catch (Exception e) {
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
+        }
+        return null;
+    }
+
+    public static void RemovePerfil(Permissions perfil) {
+        if (perfil.name.compareTo("root") == 0) { return; }
+        final String query = String.format("DELETE FROM %s WHERE id=%d", PERFIL_TABLE, perfil.id);
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("ERROR: No se a podido borrar el descuento con id = " + perfil.id + "\n\n -> " + e);
+        }
+    }
 }
