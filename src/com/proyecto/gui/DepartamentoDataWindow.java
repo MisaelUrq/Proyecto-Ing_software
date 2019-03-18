@@ -14,25 +14,25 @@ import com.proyecto.data.*;
 public class DepartamentoDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
 
-    public DepartamentoDataWindow(Connection sql_connection, String type) {
+    public DepartamentoDataWindow(String type) {
         super("Departamentos.", 360, 400);
         switch (type) {
         case "alta":
-            SetUpAlta(sql_connection);
+            SetUpAlta();
             break;
         case "baja":
-            SetUpBaja(sql_connection);
+            SetUpBaja();
             break;
         case "modificar":
-            SetUpModificar(sql_connection);
+            SetUpModificar();
             break;
         case "listar": {
-            SetUpListar(sql_connection);
+            SetUpListar();
         }
         }
     }
 
-    private void SetUpAlta(Connection sql_connection) {
+    private void SetUpAlta() {
         Label name     = new Label("Nombre: ");
         name.setPadding(padding);
 
@@ -47,7 +47,7 @@ public class DepartamentoDataWindow extends BasicWindow {
                 if (name_value.matches("^([\\d\\w\\s-_]){1,70}$")) {
                     Department department = new Department(name_field.getText(),
                                                            oferta_id);
-                    if (sql_connection.AddDeparment(department)) {
+                    if (Connection.AddDeparment(department)) {
                         this.close();
                     } else {
                         System.out.println("Error al guardar fila.");
@@ -62,7 +62,7 @@ public class DepartamentoDataWindow extends BasicWindow {
         window_pane.add(aceptar, 1, 2);
     }
 
-    private void SetUpBaja(Connection sql_connection) {
+    private void SetUpBaja() {
         Label name     = new Label("Buscar: ");
         name.setPadding(padding);
         TextField search_box = new TextField();
@@ -70,14 +70,14 @@ public class DepartamentoDataWindow extends BasicWindow {
 
         Table<Department> temp_view = new Table<Department>();
         Table.SetTableColumns(temp_view);
-        temp_view.AddAllTolist(sql_connection.GetAllDepartments());
+        temp_view.AddAllTolist(Connection.GetAllDepartments());
         temp_view.SetSearchBox(search_box);
         Button aceptar = new Button("Eliminar");
         aceptar.setPadding(padding);
         aceptar.setDefaultButton(true);
         aceptar.setOnAction(event -> {
                 Department to_delete = temp_view.RemoveSelected();
-                sql_connection.RemoveDepartment(to_delete);
+                Connection.RemoveDepartment(to_delete);
             });
         window_pane.add(name, 0, 0);
         window_pane.add(search_box, 1, 0);
@@ -85,7 +85,7 @@ public class DepartamentoDataWindow extends BasicWindow {
         window_pane.add(aceptar, 0, 2);
     }
 
-    private void SetUpModificar(Connection sql_connection) {
+    private void SetUpModificar() {
         Label search   = new Label("Buscar: ");
         search.setPadding(padding);
         TextField search_box = new TextField();
@@ -93,7 +93,7 @@ public class DepartamentoDataWindow extends BasicWindow {
 
         Table<Department> temp_view = new Table<Department>();
         Table.SetTableColumns(temp_view);
-        temp_view.AddAllTolist(sql_connection.GetAllDepartments());
+        temp_view.AddAllTolist(Connection.GetAllDepartments());
         temp_view.SetSearchBox(search_box);
 
         Label name     = new Label("Nombre: ");
@@ -115,7 +115,7 @@ public class DepartamentoDataWindow extends BasicWindow {
                     department.setName(name_value);
                 }
 
-                sql_connection.UpdateDepartment(department);
+                Connection.UpdateDepartment(department);
                 temp_view.refresh();
             });
 
@@ -129,7 +129,7 @@ public class DepartamentoDataWindow extends BasicWindow {
         window_pane.add(discount_field, 1, 3);
     }
 
-    private void SetUpListar(Connection sql_connection) {
+    private void SetUpListar() {
         Label search   = new Label("Buscar: ");
         search.setPadding(padding);
         TextField search_box = new TextField();
@@ -137,7 +137,7 @@ public class DepartamentoDataWindow extends BasicWindow {
 
         Table<Department> temp_view = new Table<Department>();
         Table.SetTableColumns(temp_view);
-        temp_view.AddAllTolist(sql_connection.GetAllDepartments());
+        temp_view.AddAllTolist(Connection.GetAllDepartments());
         temp_view.SetSearchBox(search_box);
 
         window_pane.add(search, 0, 0);

@@ -31,7 +31,7 @@ public class MainWindow extends VBox {
     private ListProductsView productos_menu;
     private ComprasView lista_compra_menu;
 
-    public MainWindow(Connection sql_connection, String current_user_name) {
+    public MainWindow(String current_user_name) {
         {
             // NOTE(Misael): Configuración de menú.
             main_view = new GridPane();
@@ -46,7 +46,7 @@ public class MainWindow extends VBox {
                 productos_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 productos_item[i].setOnAction(event -> {
-                        ProductDataWindow window = new ProductDataWindow(sql_connection, type, productos_menu);
+                        ProductDataWindow window = new ProductDataWindow(type, productos_menu);
                         window.LoadScene();
                     });
                 menu_productos.getItems().add(productos_item[i]);
@@ -57,7 +57,7 @@ public class MainWindow extends VBox {
                 departamento_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 departamento_item[i].setOnAction(event -> {
-                        DepartamentoDataWindow window = new DepartamentoDataWindow(sql_connection, type);
+                        DepartamentoDataWindow window = new DepartamentoDataWindow(type);
                         window.LoadScene();
                     });
                 menu_departamento.getItems().add(departamento_item[i]);
@@ -71,8 +71,7 @@ public class MainWindow extends VBox {
                 descuento_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 descuento_item[i].setOnAction(event -> {
-                        DescuentosDataWindow  window = new DescuentosDataWindow(sql_connection,
-                                                                                type);
+                        DescuentosDataWindow  window = new DescuentosDataWindow(type);
                         window.LoadScene();
                     });
                 menu_descuentos.getItems().add(descuento_item[i]);
@@ -86,18 +85,18 @@ public class MainWindow extends VBox {
             // TODO(Misael): Talvez separar cada region de la ventana
             // principal en su prodía clase...
             productos_menu = new ListProductsView();
-            productos_menu.AddAllTolist(sql_connection.GetAllProducts());
+            productos_menu.AddAllTolist(Connection.GetAllProducts());
             productos_menu.GetAddButton().setOnAction(event -> {
                     if (productos_menu.GetSelectedProduct().getCount_on_store() > 0) {
                         lista_compra_menu.AddToList(productos_menu.GetSelectedProduct());
-                        lista_compra_menu.SumarACompraFinal(
-                            productos_menu.GetSelectedProduct().getPrice());
+                        lista_compra_menu.SumarACompraFinal(productos_menu.GetSelectedProduct().getPrice());
                     } else {
                         // TODO(Misael): Mostrat un mensaje de que ya no hay producto.
                     }
                 });
+
             lista_compra_menu.GetFinalizarButton().setOnAction(e -> {
-                    lista_compra_menu.FinalizarCompra(sql_connection);
+                    lista_compra_menu.FinalizarCompra();
                     productos_menu.RefreshView();
                 });
 

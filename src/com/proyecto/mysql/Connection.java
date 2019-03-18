@@ -10,24 +10,23 @@ import com.proyecto.users.Permissions;
 import com.proyecto.data.*;
 
 public class Connection {
-    private final int SQL_CONNECTION_PORT = 3306;
-    private final String CONNECTION_DATA_STRING = "jdbc:mysql://localhost:"+SQL_CONNECTION_PORT+"/";
-    private final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
-    private final String CONNECTION_FLAGS = "?serverTimezone=CST";
-    private final String PRODUCT_TABLE = "producto";
-    private final String DEPARTMENT_TABLE = "departamento";
-    private final String DISCOUNT_TABLE = "descuentos";
+    private static final int SQL_CONNECTION_PORT = 3306;
+    private static final String CONNECTION_DATA_STRING = "jdbc:mysql://localhost:"+SQL_CONNECTION_PORT+"/";
+    private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
+    private static final String CONNECTION_FLAGS = "?serverTimezone=CST";
+    private static final String PRODUCT_TABLE = "producto";
+    private static final String DEPARTMENT_TABLE = "departamento";
+    private static final String DISCOUNT_TABLE = "descuentos";
 
+    private static java.sql.Connection conn;
+    private static String DATABASE;
 
-    private java.sql.Connection conn;
-    private final String DATABASE;
-
-    private boolean is_ok;
+    private static boolean is_ok;
 
     // TODO(Misael): permitiremos cambiar el nombre de la base de
     // datos? De lo contrario solo deberíamos pasar el usuario del
     // admin de esa base de datos, no el global.
-    public Connection(String database, String user, String password) {
+    public static void Connect(String database, String user, String password) {
         DATABASE = database;
         try {
            Class.forName(DRIVER_NAME);
@@ -39,11 +38,11 @@ public class Connection {
         }
     }
 
-    public boolean IsOk() {
+    public static boolean IsOk() {
         return is_ok;
     }
 
-    private boolean ExecuteQuery(String query) {
+    private static boolean ExecuteQuery(String query) {
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.executeUpdate();
@@ -54,11 +53,26 @@ public class Connection {
         }
     }
 
-    public boolean AddDeparment(Department department) {
+    public static int GetNextIdFromTable(String table) {
+        try {
+            final String query = "SELECT MAX(id) FROM "+table+";";
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            ResultSet result_set = stmt.executeQuery();
+            result_set.next();
+            int result = result_set.getInt("MAX(id)");
+            return result+1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public static boolean AddDeparment(Department department) {
         return ExecuteQuery(department.GetQueryForCreation(DEPARTMENT_TABLE));
     }
 
-    public int GetIdOfDepartment(String name) {
+    public static int GetIdOfDepartment(String name) {
         final String query = "select * from departamento where name='"+name+"';";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -79,7 +93,7 @@ public class Connection {
         return -1;
     }
 
-    public Department[] GetAllDepartments() {
+    public static Department[] GetAllDepartments() {
         final String query = "select * from departamento;";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -111,7 +125,7 @@ public class Connection {
         return null;
     }
 
-    public void UpdateDepartment(Department department) {
+    public static void UpdateDepartment(Department department) {
         final String query =
             String.format("UPDATE %s SET name='%s', id_descuento=%d WHERE id=%d",
                           PRODUCT_TABLE, department.getName(), department.getId_discount(),
@@ -124,7 +138,7 @@ public class Connection {
         }
     }
 
-    public void RemoveDepartment(Department department) {
+    public static void RemoveDepartment(Department department) {
         final String query = String.format("DELETE FROM %s WHERE id=%d", DEPARTMENT_TABLE, department.getId());
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -135,7 +149,7 @@ public class Connection {
     }
 
     // Productos
-    public void UpdateProduct(Product product) {
+    public static void UpdateProduct(Product product) {
         final String query =
             String.format("UPDATE %s SET name='%s', precio=%f, cantidad=%d, id_descuento=%d WHERE id=%d",
                           PRODUCT_TABLE, product.getName(), product.getPrice(),
@@ -149,11 +163,11 @@ public class Connection {
         }
     }
 
-    public boolean AddProducto(Product product) {
+    public static boolean AddProducto(Product product) {
         return ExecuteQuery(product.GetQueryForCreation(PRODUCT_TABLE));
     }
 
-    public void RemoveProduct(Product product) {
+    public static void RemoveProduct(Product product) {
         final String query = String.format("DELETE FROM %s WHERE id=%d", PRODUCT_TABLE, product.getId());
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -163,7 +177,7 @@ public class Connection {
         }
     }
 
-    public Product[] GetAllProducts() {
+    public static Product[] GetAllProducts() {
         final String query = "select * from producto;";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -199,7 +213,7 @@ public class Connection {
     }
 
     // Usuarios
-    public User SearchUser(String user, String password) {
+    public static User SearchUser(String user, String password) {
         final String query = "select * from usuarios where name='"+user+"' and password='"+password+"';";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -244,11 +258,11 @@ public class Connection {
     }
 
     // Descuentos
-    public boolean AddDiscount(Discount discount) {
+    public static boolean AddDiscount(Discount discount) {
         return ExecuteQuery(discount.GetQueryForCreation(DISCOUNT_TABLE));
     }
 
-    public Discount[] GetAllDiscounts() {
+    public static Discount[] GetAllDiscounts() {
         final String query = "select * from descuentos;";
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -290,7 +304,7 @@ public class Connection {
         return null;
     }
 
-    public void RemoveDiscount(Discount discount) {
+    public static void RemoveDiscount(Discount discount) {
         final String query = String.format("DELETE FROM %s WHERE id=%d", DISCOUNT_TABLE, discount.getId());
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -300,7 +314,7 @@ public class Connection {
         }
     }
 
-    public void UpdateDiscount(Discount discount) {
+    public static void UpdateDiscount(Discount discount) {
         final String query =
             String.format("UPDATE %s SET name='%s', porcentaje=%f, rebaja=%f, tipo='%s', id_producto=%d, id_department=%d, id_combo_descuento=%d, fecha_expiracion='%s' WHERE id=%d",
                           PRODUCT_TABLE, discount.getName(), discount.getValue(),

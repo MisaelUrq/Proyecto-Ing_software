@@ -52,6 +52,10 @@ public class Discount {
         this.fecha_expiracion = fecha_expiracion;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setId_producto(int id) {
         this.id_producto = id;
     }

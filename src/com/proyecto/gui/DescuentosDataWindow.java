@@ -16,25 +16,22 @@ public class DescuentosDataWindow extends BasicWindow {
     Table<Product> temp_product_view;
     Table<Department> temp_department_view;
 
-    public DescuentosDataWindow(Connection sql_connection, String type) {
+    public DescuentosDataWindow(String type) {
         super("Descuentos.", 360, 400);
         switch (type) {
         case "alta":
-            SetUpAlta(sql_connection);
+            SetUpAlta();
             break;
         case "baja":
-            SetUpBaja(sql_connection);
-            break;
-        case "modificar":
-
+            SetUpBaja();
             break;
         case "listar": {
-            SetUpListar(sql_connection);
+            SetUpListar();
         }
         }
     }
 
-    private void SetUpAlta(Connection sql_connection) {
+    private void SetUpAlta() {
         Label name     = new Label("Nombre: ");
         name.setPadding(padding);
         Label type     = new Label("Tipo: ");
@@ -43,7 +40,6 @@ public class DescuentosDataWindow extends BasicWindow {
         value.setPadding(padding);
         Label fecha      = new Label("fecha_expiracion: ");
         fecha.setPadding(padding);
-
 
         TextField name_field         = new TextField();
         name_field.setPromptText("nombre");
@@ -64,7 +60,7 @@ public class DescuentosDataWindow extends BasicWindow {
                     case 'P': {
                         temp_product_view = new Table<Product>();
                         Table.SetTableColumns(temp_product_view, false);
-                        temp_product_view.AddAllTolist(sql_connection.GetAllProducts());
+                        temp_product_view.AddAllTolist(Connection.GetAllProducts());
                         temp_product_view.setPadding(padding);
                         window_pane.add(temp_product_view, 3, 0, 2, 5);
                         this.setWidth(this.getWidth()*2);
@@ -72,7 +68,7 @@ public class DescuentosDataWindow extends BasicWindow {
                     case 'D': {
                         temp_department_view = new Table<Department>();
                         Table.SetTableColumns(temp_department_view);
-                        temp_department_view.AddAllTolist(sql_connection.GetAllDepartments());
+                        temp_department_view.AddAllTolist(Connection.GetAllDepartments());
                         temp_department_view.setPadding(padding);
                         window_pane.add(temp_department_view, 3, 0, 2, 5);
                         this.setWidth(this.getWidth()*2);
@@ -111,8 +107,12 @@ public class DescuentosDataWindow extends BasicWindow {
                     case 'P': {
                         Discount discount = new Discount(name_value, type_value.charAt(0), Float.parseFloat(value_value),fecha_value);
                         Product product = temp_product_view.GetSelected();
+                        discount.setId(Connection.GetNextIdFromTable("descuentos"));
                         discount.setId_producto(product.getId());
-                        if (sql_connection.AddDiscount(discount)) {
+                        product.SetIdDiscount(discount.getId());
+
+                        if (Connection.AddDiscount(discount)) {
+                            Connection.UpdateProduct(product);
                             this.close();
                         } else {
                             System.out.println("Error al guardar fila.");
@@ -121,8 +121,13 @@ public class DescuentosDataWindow extends BasicWindow {
                     case 'D': {
                         Discount discount = new Discount(name_value, type_value.charAt(0), Float.parseFloat(value_value),fecha_value);
                         Department department = temp_department_view.GetSelected();
+
+                        discount.setId(Connection.GetNextIdFromTable("descuentos"));
                         discount.setId_departamento(department.getId());
-                        if (sql_connection.AddDiscount(discount)) {
+                        department.setId(discount.getId());
+
+                        if (Connection.AddDiscount(discount)) {
+                            Connection.UpdateDepartment(department);
                             this.close();
                         } else {
                             System.out.println("Error al guardar fila.");
@@ -152,7 +157,7 @@ public class DescuentosDataWindow extends BasicWindow {
         window_pane.add(aceptar, 1, 4);
     }
 
-    private void SetUpBaja(Connection sql_connection) {
+    private void SetUpBaja() {
         Label name     = new Label("Buscar: ");
         name.setPadding(padding);
         TextField search_box = new TextField();
@@ -160,14 +165,14 @@ public class DescuentosDataWindow extends BasicWindow {
 
         Table<Discount> temp_view = new Table<Discount>();
         Table.SetTableColumnsDiscount(temp_view);
-        temp_view.AddAllTolist(sql_connection.GetAllDiscounts());
+        temp_view.AddAllTolist(Connection.GetAllDiscounts());
         temp_view.SetSearchBox(search_box);
         Button aceptar = new Button("Eliminar");
         aceptar.setPadding(padding);
         aceptar.setDefaultButton(true);
         aceptar.setOnAction(event -> {
                 Discount to_delete = temp_view.RemoveSelected();
-                sql_connection.RemoveDiscount(to_delete);
+                Connection.RemoveDiscount(to_delete);
             });
         window_pane.add(name, 0, 0);
         window_pane.add(search_box, 1, 0);
@@ -175,7 +180,7 @@ public class DescuentosDataWindow extends BasicWindow {
         window_pane.add(aceptar, 0, 2);
     }
 
-    private void SetUpListar(Connection sql_connection) {
+    private void SetUpListar() {
         Label search   = new Label("Buscar: ");
         search.setPadding(padding);
         TextField search_box = new TextField();
@@ -183,7 +188,7 @@ public class DescuentosDataWindow extends BasicWindow {
 
         Table<Discount> temp_view = new Table<Discount>();
         Table.SetTableColumnsDiscount(temp_view);
-        temp_view.AddAllTolist(sql_connection.GetAllDiscounts());
+        temp_view.AddAllTolist(Connection.GetAllDiscounts());
         temp_view.SetSearchBox(search_box);
 
         window_pane.add(search, 0, 0);

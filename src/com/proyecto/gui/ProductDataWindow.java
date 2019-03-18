@@ -18,25 +18,25 @@ public class ProductDataWindow extends BasicWindow {
     private Product producto_return;
     private Table<Product> temp_view = new Table<Product>();
 
-    public ProductDataWindow(Connection sql_connection, String type, ListProductsView list_view) {
+    public ProductDataWindow(String type, ListProductsView list_view) {
         super("Productos.", 360, 400);
         switch (type) {
         case "alta":
-            SetUpAlta(sql_connection, list_view);
+            SetUpAlta(list_view);
             break;
         case "baja":
-            SetUpBaja(sql_connection, list_view);
+            SetUpBaja(list_view);
             break;
         case "modificar":
-            SetUpModificar(sql_connection, list_view);
+            SetUpModificar(list_view);
             break;
         case "seleccionar": {
-            SetUpSeleccionar(sql_connection);
+            SetUpSeleccionar();
         } break;
         }
     }
 
-    private void SetUpAlta(Connection sql_connection, ListProductsView list_view) {
+    private void SetUpAlta(ListProductsView list_view) {
         Label name     = new Label("Nombre: ");
         name.setPadding(padding);
         Label precio   = new Label("Precio: ");
@@ -52,7 +52,7 @@ public class ProductDataWindow extends BasicWindow {
         ChoiceBox departamento_field = new ChoiceBox();
 
         {
-            Department[] departments = sql_connection.GetAllDepartments();
+            Department[] departments = Connection.GetAllDepartments();
             for (Department department: departments) {
                 departamento_field.getItems().add(department.getName());
             }
@@ -65,7 +65,7 @@ public class ProductDataWindow extends BasicWindow {
                 String precio_value   = precio_field.getText();
                 String cantidad_value = cantidad_field.getText();
                 String department_value = departamento_field.getValue().toString();
-                int    id_department   = sql_connection.GetIdOfDepartment(department_value);
+                int    id_department   = Connection.GetIdOfDepartment(department_value);
 
                 if (id_department > 0 &&
                     precio_value.matches("^\\d{0,8}(.\\d{1,2}){0,1}$") &&
@@ -75,7 +75,7 @@ public class ProductDataWindow extends BasicWindow {
                                                   Float.parseFloat(precio_field.getText()),
                                                   Integer.parseInt(cantidad_field.getText()),
                                                   id_department);
-                    if (sql_connection.AddProducto(product)) {
+                    if (Connection.AddProducto(product)) {
                         list_view.AddToList(product);
                         this.close();
                     } else {
@@ -97,7 +97,7 @@ public class ProductDataWindow extends BasicWindow {
         window_pane.add(aceptar, 1, 4);
     }
 
-    private void SetUpBaja(Connection sql_connection, ListProductsView list_view) {
+    private void SetUpBaja( ListProductsView list_view) {
         Label name     = new Label("Buscar: ");
         name.setPadding(padding);
         TextField search_box = new TextField();
@@ -113,7 +113,7 @@ public class ProductDataWindow extends BasicWindow {
         aceptar.setDefaultButton(true);
         aceptar.setOnAction(event -> {
                 Product to_delete = temp_view.RemoveSelected();
-                sql_connection.RemoveProduct(to_delete);
+                Connection.RemoveProduct(to_delete);
 
             });
         window_pane.add(name, 0, 0);
@@ -122,7 +122,7 @@ public class ProductDataWindow extends BasicWindow {
         window_pane.add(aceptar, 0, 2);
     }
 
-    private void SetUpModificar(Connection sql_connection, ListProductsView list_view) {
+    private void SetUpModificar( ListProductsView list_view) {
         Label search   = new Label("Buscar: ");
         search.setPadding(padding);
         TextField search_box = new TextField();
@@ -165,7 +165,7 @@ public class ProductDataWindow extends BasicWindow {
                     product.setCount_on_store(product.getCount_on_store() + Integer.parseInt(cantidad_value));
                 }
 
-                sql_connection.UpdateProduct(product);
+                Connection.UpdateProduct(product);
                 list_view.RefreshView();
                 temp_view.refresh();
             });
@@ -184,7 +184,7 @@ public class ProductDataWindow extends BasicWindow {
         window_pane.add(discount_field, 1, 5);
     }
 
-    private void SetUpSeleccionar(Connection sql_connection) {
+    private void SetUpSeleccionar() {
         Label search   = new Label("Buscar: ");
         button_seleccionador = new Button("Aceptar");
 
@@ -194,7 +194,7 @@ public class ProductDataWindow extends BasicWindow {
 
         Table<Product> temp_view = new Table<Product>();
         Table.SetTableColumns(temp_view, true);
-        temp_view.AddAllTolist(sql_connection.GetAllProducts());
+        temp_view.AddAllTolist(Connection.GetAllProducts());
         temp_view.SetSearchBox(search_box);
 
         System.out.println("hola");

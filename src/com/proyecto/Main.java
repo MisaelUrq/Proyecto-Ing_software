@@ -14,7 +14,6 @@ public class Main extends Application {
     private static final int    WINDOW_WIDTH  = 980;
     private static final String WINDOW_NAME   = "App";
 
-    private static Connection sql_connection;
     private static User       usuario_actual;
 
     public static void main(String[] args) {
@@ -24,8 +23,8 @@ public class Main extends Application {
         final String password          = System.getProperty("password", "");
 
         try {
-            sql_connection = new Connection(database, user, password);
-            if (sql_connection.IsOk()) {
+            Connection.Connect(database, user, password);
+            if (Connection.IsOk()) {
                 launch(args);
             } else {
                 // TODO(Misael): Mostrar una ventana de error.
@@ -34,6 +33,7 @@ public class Main extends Application {
         } catch (Exception e) {
             // TODO(Misael): Hacer un sistema de login?
             System.out.println("ERROR: No sé pudo lanzar la GUI.");
+            System.exit(-1);
             e.printStackTrace();
         }
     }
@@ -46,11 +46,11 @@ public class Main extends Application {
 
         LoginWindow login_window = new LoginWindow();
         login_window.accept_button.setOnAction(event -> {
-                usuario_actual = sql_connection.SearchUser(login_window.user_field.getText(),
+                usuario_actual = Connection.SearchUser(login_window.user_field.getText(),
                                                            login_window.pass_field.getText());
                 if (usuario_actual != null) {
                     login_window.close();
-                    Scene scene = new Scene(new MainWindow(sql_connection, usuario_actual.GetName()));
+                    Scene scene = new Scene(new MainWindow(usuario_actual.GetName()));
                     primary_state.setScene(scene);
                     primary_state.show();
                 } else {

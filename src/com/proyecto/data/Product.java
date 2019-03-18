@@ -79,8 +79,17 @@ public class Product {
     }
 
     public void setId_discount(boolean editable) {
-        id_discount =  (editable) ? 1: 0;
+        // NOTE(Misael): This is just wrong, the reason? I hate java
+        // and the table system, and the table is really poor in
+        // customization so I had to do this to stop the table from
+        // complaining.
+        id_discount = id_discount;
     }
+
+    public void SetIdDiscount(int id_discount) {
+        this.id_discount = id_discount;
+    }
+
 
     public int getIDDeparment() {
         return id_department;

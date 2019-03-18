@@ -52,12 +52,12 @@ public class ComprasView extends GridPane {
         setPadding(padding);
     }
 
-    public void FinalizarCompra(Connection sql_connection) {
+    public void FinalizarCompra() {
         ResetCompraFinal();
         ObservableList<Product> elements = table_view.GetList();
         for (Product product : elements) {
             product.setCount_on_store(product.getCount_on_store()-1);
-            sql_connection.UpdateProduct(product);
+            Connection.UpdateProduct(product);
         }
         table_view.Clear();
     }
