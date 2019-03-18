@@ -230,6 +230,7 @@ public class Connection {
                 if (perfil_result.next() && perfil_result.isLast()) {
                     Permissions permissions = new Permissions();
                     permissions.id = perfil_result.getInt("id");
+                    permissions.name = perfil_result.getString("name");
                     permissions.users.FillAccessModes(perfil_result.getBoolean("alta_usuario"),
                                                       perfil_result.getBoolean("baja_usuario"),
                                                       perfil_result.getBoolean("modificar_usuario"), true);
@@ -387,10 +388,37 @@ public class Connection {
                 int id = result_set.getInt("id");
                 String name = result_set.getString("name");
                 String email   = result_set.getString("email");
+                String password   = result_set.getString("password");
                 int edad = result_set.getInt("edad");
                 int perfil = result_set.getInt("id_perfil");
                 String fecha = result_set.getString("fecha_nac");
-                result[i] = new User(id, name, "*****", email, edad, fecha, null);
+
+                String perfil_query = "select * from perfil where id="+id+";";
+                PreparedStatement perfil_stmt = conn.prepareStatement(perfil_query);
+                ResultSet perfil_result = perfil_stmt.executeQuery();
+
+                if (perfil_result.next() && perfil_result.isLast()) {
+                    Permissions permissions = new Permissions();
+                    permissions.id = perfil_result.getInt("id");
+                    permissions.name = perfil_result.getString("name");
+                    permissions.users.FillAccessModes(perfil_result.getBoolean("alta_usuario"),
+                                                      perfil_result.getBoolean("baja_usuario"),
+                                                      perfil_result.getBoolean("modificar_usuario"), true);
+                    permissions.products.FillAccessModes(perfil_result.getBoolean("alta_producto"),
+                                                         perfil_result.getBoolean("baja_producto"),
+                                                         perfil_result.getBoolean("modificar_producto"), true);
+                    permissions.oferts.FillAccessModes(perfil_result.getBoolean("alta_descuento"),
+                                                       perfil_result.getBoolean("baja_descuento"),
+                                                       perfil_result.getBoolean("modificar_descuento"), true);
+                    permissions.permissions.FillAccessModes(perfil_result.getBoolean("alta_pefiles"),
+                                                            perfil_result.getBoolean("baja_perfiles"),
+                                                            perfil_result.getBoolean("modificar_perfiles"), true);
+                    permissions.department.FillAccessModes(perfil_result.getBoolean("alta_departamentos"),
+                                                           perfil_result.getBoolean("baja_departamentos"),
+                                                           perfil_result.getBoolean("modificar_departamentos"), true);
+                    result[i] = new User(id, name, password, email, edad, fecha, permissions);
+                }
+
                 i++;
                 // TODO(misael): is this necesary?
                 if (result_set.isLast()) { break; }
@@ -403,7 +431,7 @@ public class Connection {
     }
 
     public static void RemoveUser(User user) {
-        if (user.getName() != "admin") { return; }
+        if (user.getName().compareTo("admin")==0) { return; }
         final String query = String.format("DELETE FROM %s WHERE id=%d", USER_TABLE, user.getId());
         try {
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -431,6 +459,40 @@ public class Connection {
     // Perfiles Usuarios
     public static boolean AddPerfiles(Permissions perfil) {
         return ExecuteQuery(perfil.GetQueryForCreation(PERFIL_TABLE));
+    }
+
+    public static Permissions GetPerfil(int id) {
+        final String query = "select * from perfil WHERE id="+id+";";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet result_set = stmt.executeQuery();
+            Permissions permissions = null;
+            while (result_set.next()) {
+                permissions = new Permissions();
+                permissions.id = result_set.getInt("id");
+                permissions.name = result_set.getString("name");
+                permissions.users.FillAccessModes(result_set.getBoolean("alta_usuario"),
+                                                  result_set.getBoolean("baja_usuario"),
+                                                  result_set.getBoolean("modificar_usuario"), true);
+                permissions.products.FillAccessModes(result_set.getBoolean("alta_producto"),
+                                                     result_set.getBoolean("baja_producto"),
+                                                     result_set.getBoolean("modificar_producto"), true);
+                permissions.oferts.FillAccessModes(result_set.getBoolean("alta_descuento"),
+                                                   result_set.getBoolean("baja_descuento"),
+                                                   result_set.getBoolean("modificar_descuento"), true);
+                permissions.permissions.FillAccessModes(result_set.getBoolean("alta_pefiles"),
+                                                        result_set.getBoolean("baja_perfiles"),
+                                                        result_set.getBoolean("modificar_perfiles"), true);
+                permissions.department.FillAccessModes(result_set.getBoolean("alta_departamentos"),
+                                                       result_set.getBoolean("baja_departamentos"),
+                                                       result_set.getBoolean("modificar_departamentos"), true);
+                if (result_set.isLast()) { break; }
+            }
+            return permissions;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static Permissions[] GetAllPerfiles() {

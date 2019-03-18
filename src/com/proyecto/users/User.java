@@ -44,15 +44,19 @@ public class User {
         return fecha_nac;
     }
 
+    public String getPermissionsName() {
+        return permissions.name;
+    }
+
     public String GetQueryForCreation(String table) {
         String query;
         if (id == 0) {
             query = String.format(
-                "INSERT INTO %s (name, password, email, edad, fecha_nac, perfil) VALUES(%d,'%s','%s','%s',%d,'%s',%d);",
+                "INSERT INTO %s (name, password, email, edad, fecha_nac, id_perfil) VALUES('%s','%s','%s',%d,'%s',%d);",
                 table, name, password, email, edad, fecha_nac, permissions.id);
         } else {
             query = String.format(
-                "INSERT INTO %s (id, name, password, email, edad, fecha_nac, perfil) VALUES(%d,'%s','%s','%s',%d,'%s',%d);",
+                "INSERT INTO %s (id, name, password, email, edad, fecha_nac, id_perfil) VALUES(%d,'%s','%s','%s',%d,'%s',%d);",
                 table, id, name, password, email, edad, fecha_nac, permissions.id);
         }
         return query;

@@ -96,19 +96,16 @@ public class MainWindow extends VBox {
                 menu_perfiles.getItems().add(perfil_item[i]);
             }
 
-            // MenuItem user_item[] = new MenuItem[4];
-            // for (int i = 0; i < user_item.length; ++i) {
-            //     if (opciones_menus[i].compareTo("modificar") == 0) {
-            //         continue;
-            //     }
-            //     user_item[i] = new MenuItem(opciones_menus[i]);
-            //     String type = opciones_menus[i];
-            //     user_item[i].setOnAction(event -> {
-            //             PerfilesDataWindow  window = new PerfilesDataWindow(type);
-            //             window.LoadScene();
-            //         });
-            //     menu_useres.getItems().add(user_item[i]);
-            // }
+            MenuItem user_item[] = new MenuItem[4];
+            for (int i = 0; i < user_item.length; ++i) {
+                user_item[i] = new MenuItem(opciones_menus[i]);
+                String type = opciones_menus[i];
+                user_item[i].setOnAction(event -> {
+                        UsersDataWindow  window = new UsersDataWindow(type);
+                        window.LoadScene();
+                    });
+                menu_usuarios.getItems().add(user_item[i]);
+            }
 
             menu_bar.getMenus().addAll(menu_productos, menu_departamento, menu_descuentos, menu_perfiles, menu_usuarios);
         }

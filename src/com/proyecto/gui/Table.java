@@ -151,9 +151,30 @@ public class Table<T> extends TableView {
         table_view.getColumns().add(fecha_ofert);
     }
 
+    public static void SetTableColumnsUsers(Table<User> table_view) {
+        TableColumn<User, String> name = new TableColumn<User, String>("Nombre");
+        name.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
+        table_view.getColumns().add(name);
+
+        TableColumn<User, String> email = new TableColumn<User, String>("Correo");
+        email.setCellValueFactory(new PropertyValueFactory<User, String>("email"));
+        table_view.getColumns().add(email);
+        TableColumn<User, String> fecha = new TableColumn<User, String>("fecha nacimiento");
+        fecha.setCellValueFactory(new PropertyValueFactory<User, String>("fecha_nac"));
+        table_view.getColumns().add(fecha);
+
+        TableColumn<User, Integer> edad = new TableColumn<User, Integer>("Edad");
+        edad.setCellValueFactory(new PropertyValueFactory<User, Integer>("edad"));
+        table_view.getColumns().add(edad);
+
+        TableColumn<User, Integer> name_perfil = new TableColumn<User, Integer>("Perfil");
+        name_perfil.setCellValueFactory(new PropertyValueFactory<User, Integer>("permissionsName"));
+        table_view.getColumns().add(name_perfil);
+    }
+
     public static void SetTableColumnsPerfiles(Table<Permissions> table_view) {
         TableColumn<Permissions, Integer> id = new TableColumn<Permissions, Integer>("Id");
-        id.setCellValueFactory(new PropertyValueFactory<Permissions, Integer>("id_discount"));
+        id.setCellValueFactory(new PropertyValueFactory<Permissions, Integer>("id"));
         table_view.getColumns().add(id);
 
         TableColumn<Permissions, String> name = new TableColumn<Permissions, String>("Nombre");
