@@ -1,5 +1,7 @@
 package com.proyecto.data;
 
+import com.proyecto.mysql.Connection;
+
 public class Product {
 
     private int id;
@@ -51,6 +53,15 @@ public class Product {
     }
 
     public float getPrice() {
+        if (id_discount > 0) {
+            Discount discount = Connection.GetDiscount(id_discount, "id");
+            return price - discount.getValue();
+        } else {
+            Discount discount = Connection.GetDiscount(id_department, "departamento");
+            if (discount != null) {
+                return price - discount.getValue();
+            }
+        }
         return price;
     }
 
@@ -91,7 +102,7 @@ public class Product {
     }
 
 
-    public int getIDDeparment() {
+    public int getId_department() {
         return id_department;
     }
 

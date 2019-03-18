@@ -304,6 +304,48 @@ public class Connection {
         return null;
     }
 
+    public static Discount GetDiscount(int id_to_search, String type_of_id) {
+        final String query;
+        switch (type_of_id) {
+        case "id":
+            query = "select * from descuentos WHERE id = "+id_to_search+";";
+            break;
+        case "departamento":
+            query = "select * from descuentos WHERE id_departamento = "+id_to_search+";";
+            break;
+        case "producto":
+            query = "select * from descuentos WHERE id_producto = "+id_to_search+";";
+            break;
+        default:
+            query = "";
+            return null;
+        }
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            Discount result;
+            ResultSet result_set = stmt.executeQuery();
+            while (result_set.next()) {
+                int id = result_set.getInt("id");
+                String name = result_set.getString("name");
+                float value   = result_set.getFloat("porcentaje");
+                String type = result_set.getString("tipo");
+                int id_producto = result_set.getInt("id_producto");
+                int id_department = result_set.getInt("id_departamento");
+                int id_combo_descuento = result_set.getInt("id_combo_descuento");
+                String fecha = result_set.getString("fecha_expiracion");
+
+                result = new Discount(id, name, type.charAt(0), value, fecha);
+                result.setId_producto(id_producto);
+                result.setId_departamento(id_department);
+                result.setId_combo_descuentos(id_combo_descuento);
+                return result;
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR: La consulta {"+query+"} no pudo ser ejecutada.");
+        }
+        return null;
+    }
+
     public static void RemoveDiscount(Discount discount) {
         final String query = String.format("DELETE FROM %s WHERE id=%d", DISCOUNT_TABLE, discount.getId());
         try {

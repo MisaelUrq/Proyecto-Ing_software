@@ -173,9 +173,13 @@ public class Table<T> extends TableView {
         id_count.setCellValueFactory(new PropertyValueFactory<Discount, Integer>("id"));
         table_view.getColumns().add(id_count);
 
-        TableColumn<Product, Integer> id_producto = new TableColumn<Product, Integer>("Id producto");
-        id_producto.setCellValueFactory(new PropertyValueFactory<Product, Integer>("id_producto"));
+        TableColumn<Discount, Integer> id_producto = new TableColumn<Discount, Integer>("Id producto");
+        id_producto.setCellValueFactory(new PropertyValueFactory<Discount, Integer>("id_producto"));
         table_view.getColumns().add(id_producto);
+
+        TableColumn<Discount, Integer> id_department = new TableColumn<Discount, Integer>("Id departamento");
+        id_department.setCellValueFactory(new PropertyValueFactory<Discount, Integer>("id_departamento"));
+        table_view.getColumns().add(id_department);
         //
 
         TableColumn<Discount, String> column_name = new TableColumn<Discount, String>("nombre");
