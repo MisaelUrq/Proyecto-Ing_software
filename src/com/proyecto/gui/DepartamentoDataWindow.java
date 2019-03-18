@@ -10,21 +10,34 @@ import javafx.geometry.Insets;
 import com.proyecto.gui.mainwindow.ListProductsView;
 import com.proyecto.mysql.Connection;
 import com.proyecto.data.*;
+import com.proyecto.users.User;
 
 public class DepartamentoDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
 
-    public DepartamentoDataWindow(String type) {
+    public DepartamentoDataWindow(User user, String type) {
         super("Departamentos.", 360, 400);
         switch (type) {
         case "alta":
-            SetUpAlta();
+            if (user.permissions.department.create) {
+                SetUpAlta();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para crear departamentos.");
+            }
             break;
         case "baja":
-            SetUpBaja();
+            if (user.permissions.department.delete) {
+                SetUpBaja();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para eliminar departamentos.");
+            }
             break;
         case "modificar":
-            SetUpModificar();
+            if (user.permissions.department.modify) {
+                SetUpModificar();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para modificar departamentos.");
+            }
             break;
         case "listar": {
             SetUpListar();

@@ -8,7 +8,7 @@ public class User {
     private String email;
     private String fecha_nac;
     private int    edad;
-    private Permissions permissions;
+    public Permissions permissions;
 
     public User(int id, String name, String password, String email, int edad, String fecha_nac, Permissions permissions) {
         this.id = id;

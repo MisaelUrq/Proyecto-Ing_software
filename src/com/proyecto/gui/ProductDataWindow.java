@@ -11,6 +11,7 @@ import com.proyecto.gui.mainwindow.ListProductsView;
 import com.proyecto.mysql.Connection;
 import com.proyecto.data.Product;
 import com.proyecto.data.Department;
+import com.proyecto.users.User;
 
 public class ProductDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
@@ -18,17 +19,29 @@ public class ProductDataWindow extends BasicWindow {
     private Product producto_return;
     private Table<Product> temp_view = new Table<Product>();
 
-    public ProductDataWindow(String type, ListProductsView list_view) {
+    public ProductDataWindow(User user, String type, ListProductsView list_view) {
         super("Productos.", 360, 400);
         switch (type) {
         case "alta":
-            SetUpAlta(list_view);
+            if (user.permissions.products.create) {
+                SetUpAlta(list_view);
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para crear productos.");
+            }
             break;
         case "baja":
-            SetUpBaja(list_view);
+            if (user.permissions.products.delete) {
+                SetUpBaja(list_view);
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para eliminar productos.");
+            }
             break;
         case "modificar":
-            SetUpModificar(list_view);
+            if (user.permissions.products.modify) {
+                SetUpModificar(list_view);
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para modificar productos.");
+            }
             break;
         case "seleccionar": {
             SetUpSeleccionar();

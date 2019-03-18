@@ -15,14 +15,22 @@ import com.proyecto.users.*;
 public class PerfilesDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
 
-    public PerfilesDataWindow(String type) {
+    public PerfilesDataWindow(User user, String type) {
         super("Descuentos.", 360, 400);
         switch (type) {
         case "alta":
-            SetUpAlta();
+            if (user.permissions.permissions.create) {
+                SetUpAlta();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para crear perfiles.");
+            }
             break;
         case "baja":
-            SetUpBaja();
+            if (user.permissions.permissions.delete) {
+                SetUpBaja();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para eliminar perfiles.");
+            }
             break;
         case "listar": {
             SetUpListar();

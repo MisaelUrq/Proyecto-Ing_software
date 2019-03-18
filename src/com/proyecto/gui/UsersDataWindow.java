@@ -14,19 +14,36 @@ import com.proyecto.users.*;
 
 public class UsersDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
+    public  final String type;
 
-    public UsersDataWindow(String type) {
+    public UsersDataWindow(User user, String type) {
         super("Descuentos.", 360, 400);
+        this.type = type;
         switch (type) {
         case "alta":
-            SetUpAlta();
+            if (user.permissions.users.create) {
+                SetUpAlta();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para crear usuarios.");
+            }
             break;
         case "baja":
-            SetUpBaja();
+            if (user.permissions.users.delete) {
+                SetUpBaja();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para eliminar usuarios.");
+            }
+            break;
+        case "modificar":
+            if (user.permissions.users.modify) {
+                // TODO(misael): Finish this...
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para modificar usuarios.");
+            }
             break;
         case "listar": {
             SetUpListar();
-        }
+        } break;
         }
     }
 

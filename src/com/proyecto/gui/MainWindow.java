@@ -51,7 +51,7 @@ public class MainWindow extends VBox {
                 productos_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 productos_item[i].setOnAction(event -> {
-                        ProductDataWindow window = new ProductDataWindow(type, productos_menu);
+                        ProductDataWindow window = new ProductDataWindow(usuario_actual, type, productos_menu);
                         window.LoadScene();
                     });
                 menu_productos.getItems().add(productos_item[i]);
@@ -62,7 +62,7 @@ public class MainWindow extends VBox {
                 departamento_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 departamento_item[i].setOnAction(event -> {
-                        DepartamentoDataWindow window = new DepartamentoDataWindow(type);
+                        DepartamentoDataWindow window = new DepartamentoDataWindow(usuario_actual, type);
                         window.LoadScene();
                     });
                 menu_departamento.getItems().add(departamento_item[i]);
@@ -76,7 +76,7 @@ public class MainWindow extends VBox {
                 descuento_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 descuento_item[i].setOnAction(event -> {
-                        DescuentosDataWindow  window = new DescuentosDataWindow(type);
+                        DescuentosDataWindow window = new DescuentosDataWindow(usuario_actual, type);
                         window.LoadScene();
                     });
                 menu_descuentos.getItems().add(descuento_item[i]);
@@ -90,7 +90,7 @@ public class MainWindow extends VBox {
                 perfil_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 perfil_item[i].setOnAction(event -> {
-                        PerfilesDataWindow  window = new PerfilesDataWindow(type);
+                        PerfilesDataWindow  window = new PerfilesDataWindow(usuario_actual, type);
                         window.LoadScene();
                     });
                 menu_perfiles.getItems().add(perfil_item[i]);
@@ -101,7 +101,7 @@ public class MainWindow extends VBox {
                 user_item[i] = new MenuItem(opciones_menus[i]);
                 String type = opciones_menus[i];
                 user_item[i].setOnAction(event -> {
-                        UsersDataWindow  window = new UsersDataWindow(type);
+                        UsersDataWindow  window = new UsersDataWindow(usuario_actual, type);
                         window.LoadScene();
                     });
                 menu_usuarios.getItems().add(user_item[i]);

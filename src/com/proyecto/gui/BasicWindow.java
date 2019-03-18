@@ -23,4 +23,13 @@ public class BasicWindow extends Stage {
         this.setScene(new Scene(window_pane));
         this.show();
     }
+
+    public void SetUpMessage(String title, String msg) {
+        this.setTitle(title);
+        this.setWidth(340);
+        this.setHeight(150);
+        Label label = new Label(msg);
+        window_pane.add(label, 0, 0);
+    }
+
 }

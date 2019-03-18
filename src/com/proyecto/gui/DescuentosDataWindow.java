@@ -10,20 +10,29 @@ import javafx.geometry.Insets;
 import com.proyecto.gui.mainwindow.ListProductsView;
 import com.proyecto.mysql.Connection;
 import com.proyecto.data.*;
+import com.proyecto.users.User;
 
 public class DescuentosDataWindow extends BasicWindow {
     private final Insets padding = new Insets(10, 10, 10, 10);
     Table<Product> temp_product_view;
     Table<Department> temp_department_view;
 
-    public DescuentosDataWindow(String type) {
+    public DescuentosDataWindow(User user, String type) {
         super("Descuentos.", 360, 400);
         switch (type) {
         case "alta":
-            SetUpAlta();
+            if (user.permissions.oferts.create) {
+                SetUpAlta();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para crear ofertas.");
+            }
             break;
         case "baja":
-            SetUpBaja();
+            if (user.permissions.oferts.delete) {
+                SetUpBaja();
+            } else {
+                SetUpMessage("Falta de permisos", "Usted '"+user.getName()+"' no tiene permisos para eliminar ofertas.");
+            }
             break;
         case "listar": {
             SetUpListar();
